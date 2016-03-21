@@ -4,18 +4,6 @@ RSpec.describe AnswersController, type: :controller do
   let(:question) { create(:question) }
   let(:answer) { create(:answer, question: question) }
 
-  describe 'GET #new' do
-    before { get :new, question_id: question.id }
-
-    it 'assigns a new Answer to @answer' do
-      expect(assigns(:answer)).to be_a_new(Answer)
-    end
-
-    it 'render new view' do
-      expect(response).to render_template :new
-    end
-  end
-
   describe 'POST #create' do
     context 'with valid attributes' do
 
@@ -23,7 +11,7 @@ RSpec.describe AnswersController, type: :controller do
         expect { post :create, question_id: question.id, answer: attributes_for(:answer) }.to change(question.answers, :count).by(1)
       end
 
-      it 'redirect to question view' do
+      it 'redirect to question page' do
         post :create, question_id: question.id, answer: attributes_for(:answer)
         expect(response).to redirect_to question_path(assigns(:answer).question)
       end
@@ -34,9 +22,9 @@ RSpec.describe AnswersController, type: :controller do
         expect { post :create, question_id: question.id, answer: attributes_for(:invalid_answer) }.to_not change(Answer, :count)
       end
 
-      it 're-render new view' do
+      it 'redirect to question page' do
         post :create, question_id: question.id, answer: attributes_for(:invalid_answer)
-        expect(response).to render_template :new
+        expect(response).to redirect_to question_path(assigns(:answer).question)
       end
     end
   end

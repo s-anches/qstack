@@ -2,3 +2,17 @@ div.title
   = @question.title
 div.body
   = @question.body
+
+div.answer
+  = form_for [@question, @answer] do |f|
+    div.body
+      = f.label :body
+      br
+      = f.text_area :body
+    div.actions
+      = f.submit "Save answer"
+
+div.answers
+  - @answers.each do |answer|
+    div.answer
+      = answer.body

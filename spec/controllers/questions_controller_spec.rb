@@ -2,7 +2,8 @@ require 'rails_helper'
 
 RSpec.describe QuestionsController, type: :controller do
   let(:question) { create :question }
-  let(:questions) { create_list :question, 2}
+  let(:questions) { create_list :question, 2 }
+  let(:answers) { create_list(:answer, 5, question: question) }
 
   describe 'GET #index' do
     before { get :index }
@@ -20,6 +21,14 @@ RSpec.describe QuestionsController, type: :controller do
 
     it 'assigns the requested question' do
       expect(assigns(:question)).to eq question
+    end
+
+    it 'assigns the requested answers to question' do
+      expect(assigns(:answers)).to match_array(answers)
+    end
+
+    it 'assigns a new Answer to @answer' do
+      expect(assigns(:answer)).to be_a_new(Answer)
     end
 
     it 'render show view' do
@@ -44,7 +53,7 @@ RSpec.describe QuestionsController, type: :controller do
         expect { post :create, question: attributes_for(:question) }.to change(Question, :count).by(1)
       end
 
-      it 'redirects to show view' do
+      it 'redirects to show page' do
         post :create, question: attributes_for(:question)
         expect(response).to redirect_to question_path(assigns(:question))
       end

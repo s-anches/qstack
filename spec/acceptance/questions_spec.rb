@@ -9,7 +9,7 @@ feature 'User can view all question', %q{
   given(:questions) { create_list(:question, 5) }
   before { questions }
 
-  scenario 'view all question' do
+  scenario 'view all questions' do
     visit root_path
 
     questions.each do |question|

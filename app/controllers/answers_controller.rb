@@ -1,16 +1,13 @@
 class AnswersController < ApplicationController
   before_action :load_question
 
-  def new
-    @answer = @question.answers.new
-  end
-
   def create
     @answer = @question.answers.new(answer_params)
     if @answer.save
       redirect_to @question
     else
-      render :new
+      flash[:error] = "Invalid answer"
+      redirect_to @question
     end
   end
 
