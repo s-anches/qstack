@@ -1,6 +1,10 @@
 class QuestionsController < ApplicationController
   before_action :load_question, only: [:show]
 
+  def index
+    @questions = Question.all
+  end
+
   def show
   end
 
@@ -14,6 +18,7 @@ class QuestionsController < ApplicationController
     if @question.save
       redirect_to @question
     else
+      flash[:error] = "INVALID ATTRIBUTES"
       render :new
     end
   end

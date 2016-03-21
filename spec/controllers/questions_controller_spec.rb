@@ -2,6 +2,18 @@ require 'rails_helper'
 
 RSpec.describe QuestionsController, type: :controller do
   let(:question) { create :question }
+  let(:questions) { create_list :question, 2}
+
+  describe 'GET #index' do
+    before { get :index }
+    it 'populates an array of all questions' do
+      expect(assigns(:questions)).to match_array(questions)
+    end
+
+    it 'render index view' do
+      expect(response).to render_template :index
+    end
+  end
 
   describe 'GET #show' do
     before { get :show, id: question }
