@@ -2,6 +2,6 @@
 
 - @questions.each do |question|
   div.title
-    = question.title
+    = link_to question.title, question_path(question)
   div.body
     = question.body
