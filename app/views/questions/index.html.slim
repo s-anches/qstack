@@ -1,1 +1,7 @@
 = link_to 'New question', new_question_path
+
+- @questions.each do |question|
+  div.title
+    = question.title
+  div.body
+    = question.body
