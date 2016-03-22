@@ -7,8 +7,7 @@ feature 'User sign up', %q{
 } do
 
   scenario 'Anonymous user try to sign up' do
-    visit root_path
-    click_on 'New user'
+    visit new_user_registration_path
     fill_in 'Email', with: 'user@test.com'
     fill_in 'Password', with: '12345678'
     fill_in 'Password confirmation', with: '12345678'

@@ -6,7 +6,6 @@ feature 'User can view all question', %q{
   I want to go to index page
 } do
 
-
   given(:questions) { create_list(:question, 5) }
   before { questions }
 
@@ -23,14 +22,17 @@ end
 
 feature 'Create new question', %q{
   In order to be able to ask question
-  As an user
+  As an authenticated user
   I want to be able to ask question
 } do
 
-  scenario 'with valid attributes' do
-    visit root_path
-    click_on 'New question'
+  given(:user) { create :user }
 
+  scenario 'Authenticated user create question with valid attributes' do
+    sign_in(user)
+
+    visit questions_path
+    click_on 'New question'
     fill_in 'Title', with: 'New question'
     fill_in 'Body', with: 'New body of question'
     click_on 'Save'
@@ -39,12 +41,21 @@ feature 'Create new question', %q{
     expect(page).to have_content 'New body of question'
   end
 
-  scenario 'witn invalid attributes' do
-    visit root_path
+  scenario 'Authenticated user create question witn invalid attributes' do
+    sign_in(user)
+
+    visit questions_path
     click_on 'New question'
     click_on 'Save'
 
     expect(page).to have_content 'INVALID ATTRIBUTES'
+  end
+
+  scenario 'Non-authenticated user try to create question' do
+    visit questions_path
+    click_on 'New question'
+
+    expect(page).to have_content 'You need to sign in or sign up before continuing.'
   end
 
 end
