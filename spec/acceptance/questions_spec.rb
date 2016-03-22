@@ -69,7 +69,10 @@ feature 'User can see question with answers', %q{
   given(:question) { create(:question) }
   given(:answers) { create_list(:answer, 5, question: question) }
 
-  before { question }
+  before do
+    question
+    answers
+  end
 
   scenario 'see question with answers' do
     visit root_path
@@ -80,6 +83,35 @@ feature 'User can see question with answers', %q{
     answers.each do |answer|
       expect(page).to have_content answer.body
     end
+  end
+
+end
+
+feature 'User can delete only his question', %q{
+  In order to be able delete my question
+  As an author of question
+  I want to be able delete question
+} do
+
+  given(:user) { create :user }
+  given(:question) { create(:question, user: user) }
+  given(:other_question) { create(:question) }
+
+  scenario 'can delete his question' do
+    sign_in(user)
+    visit question_path(question)
+    click_on 'Delete'
+
+    expect(page).to have_content 'Question successfuly deleted.'
+    expect(current_path).to eq questions_path
+  end
+
+  scenario 'can not delete other owner question' do
+    sign_in(user)
+    visit question_path(other_question)
+    click_on 'Delete'
+
+    expect(page).to have_content 'You can not delete not his question.'
   end
 
 end

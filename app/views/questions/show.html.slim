@@ -2,7 +2,8 @@ div.title
   = @question.title
 div.body
   = @question.body
-
+div.actions
+  = link_to 'Delete', question_path(@question), method: :delete
 div.answer
   = form_for [@question, @answer] do |f|
     div.body
@@ -16,3 +17,8 @@ div.answers
   - @answers.each do |answer|
     div.answer
       = answer.body
+    div.actions
+      - if user_signed_in?
+        - if current_user.id == answer.user_id
+          = link_to 'Detele', question_answer_path(@question, answer), method: :delete,
+          class: "delete-answer-link"

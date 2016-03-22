@@ -1,6 +1,6 @@
 class QuestionsController < ApplicationController
   before_action :authenticate_user!, except: [:index, :show]
-  before_action :load_question, only: [:show]
+  before_action :load_question, only: [:show, :destroy]
 
   def index
     @questions = Question.all
@@ -23,6 +23,17 @@ class QuestionsController < ApplicationController
     else
       flash[:error] = "INVALID ATTRIBUTES"
       render :new
+    end
+  end
+
+  def destroy
+    if @question.user == current_user
+      @question.destroy
+      flash[:notice] = "Question successfuly deleted."
+      redirect_to questions_path
+    else
+      flash[:error] = "You can not delete not his question."
+      redirect_to question_path(@question)
     end
   end
 

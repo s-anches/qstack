@@ -1,9 +1,12 @@
 require 'rails_helper'
 
 RSpec.describe QuestionsController, type: :controller do
-  let(:question) { create :question }
+  let(:user) { create :user }
+  let(:question) { create :question, user: user }
   let(:questions) { create_list :question, 2 }
   let(:answers) { create_list(:answer, 5, question: question) }
+
+  before { @request.env['devise.mapping'] = Devise.mappings[:user] }
 
   describe 'GET #index' do
     before { get :index }
@@ -37,8 +40,10 @@ RSpec.describe QuestionsController, type: :controller do
   end
 
   describe 'GET #new' do
-    sign_in_user
-    before { get :new }
+    before do
+      sign_in(user)
+      get :new
+    end
 
     it 'assigns a new Question to @question' do
       expect(assigns(:question)).to be_a_new(Question)
@@ -50,7 +55,7 @@ RSpec.describe QuestionsController, type: :controller do
   end
 
   describe 'POST #create' do
-    sign_in_user
+    before { sign_in(user) }
 
     context 'with valid attributes' do
       it 'saves the new question in database' do
@@ -72,6 +77,22 @@ RSpec.describe QuestionsController, type: :controller do
         post :create, question: attributes_for(:invalid_question)
         expect(response).to render_template :new
       end
+    end
+  end
+
+  describe 'DELETE #destroy' do
+    before do
+      sign_in(user)
+      question
+    end
+
+    it 'delete question' do
+      expect { delete :destroy, id: question }.to change(Question, :count).by(-1)
+    end
+
+    it 'redirect to index view' do
+      delete :destroy, id: question
+      expect(response).to redirect_to questions_path
     end
   end
 end
