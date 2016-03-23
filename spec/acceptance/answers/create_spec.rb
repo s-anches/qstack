@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-feature 'User can write answer', %q{
+feature 'User can create answer', %q{
   In order to be able write answer to question
   As an authenticated user
   I want to be able to write answer
@@ -36,33 +36,6 @@ feature 'User can write answer', %q{
     click_on 'Save answer'
 
     expect(page).to have_content 'You need to sign in or sign up before continuing.'
-  end
-
-end
-
-feature 'User can delete only his answer', %q{
-  In order to be able delete my answer
-  As an author of answer
-  I want to be able delete answer
-} do
-
-  given(:user) { create :user }
-  given(:answer) { create(:answer, user: user) }
-  given(:other_answer) { create(:answer) }
-
-  scenario 'can delete his answer' do
-    sign_in(user)
-    visit question_path(answer.question)
-    find(".delete-answer-link").click
-
-    expect(page).to have_content 'Answer succefully deleted'
-    expect(page).to_not have_content answer.body
-  end
-
-  scenario 'can not delete other owner question' do
-    sign_in(user)
-    visit question_path(other_answer.question)
-    expect(page).to_not have_css '.delete-answer-link'
   end
 
 end

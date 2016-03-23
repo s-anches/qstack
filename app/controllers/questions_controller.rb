@@ -16,7 +16,7 @@ class QuestionsController < ApplicationController
   end
 
   def create
-    @question = Question.new(question_params)
+    @question = current_user.questions.new(question_params)
 
     if @question.save
       redirect_to @question
@@ -27,13 +27,13 @@ class QuestionsController < ApplicationController
   end
 
   def destroy
-    if @question.user == current_user
+    if current_user.author_of?(@question)
       @question.destroy
       flash[:notice] = "Question successfuly deleted."
       redirect_to questions_path
     else
       flash[:error] = "You can not delete not his question."
-      redirect_to question_path(@question)
+      redirect_to @question
     end
   end
 

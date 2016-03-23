@@ -4,24 +4,21 @@ class AnswersController < ApplicationController
   before_action :load_answer, only: :destroy
 
   def create
-    @answer = @question.answers.new(answer_params)
-    if @answer.save
-      redirect_to @question
-    else
+    @answer = @question.answers.new(answer_params.merge({ user: current_user }))
+    unless @answer.save
       flash[:error] = "Invalid answer"
-      redirect_to @question
     end
+    redirect_to @question
   end
 
   def destroy
-    if @answer.user == current_user
+    if current_user.author_of?(@answer)
       @answer.destroy
       flash[:notice] = "Answer succefully deleted."
-      redirect_to @question
     else
       flash[:error] = "You not have permissions."
-      redirect_to @question
     end
+    redirect_to @question
   end
 
   private

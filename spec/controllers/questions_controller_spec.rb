@@ -3,6 +3,7 @@ require 'rails_helper'
 RSpec.describe QuestionsController, type: :controller do
   let(:user) { create :user }
   let(:question) { create :question, user: user }
+  let(:question_other) { create :question }
   let(:questions) { create_list :question, 2 }
   let(:answers) { create_list(:answer, 5, question: question) }
 
@@ -59,7 +60,7 @@ RSpec.describe QuestionsController, type: :controller do
 
     context 'with valid attributes' do
       it 'saves the new question in database' do
-        expect { post :create, question: attributes_for(:question) }.to change(Question, :count).by(1)
+        expect { post :create, question: attributes_for(:question) }.to change(user.questions, :count).by(1)
       end
 
       it 'redirects to show page' do
@@ -84,15 +85,29 @@ RSpec.describe QuestionsController, type: :controller do
     before do
       sign_in(user)
       question
+      question_other
     end
 
-    it 'delete question' do
-      expect { delete :destroy, id: question }.to change(Question, :count).by(-1)
+    context 'Author' do
+      it 'delete his question' do
+        expect { delete :destroy, id: question }.to change(Question, :count).by(-1)
+      end
+
+      it 'redirect to index view' do
+        delete :destroy, id: question
+        expect(response).to redirect_to questions_path
+      end
     end
 
-    it 'redirect to index view' do
-      delete :destroy, id: question
-      expect(response).to redirect_to questions_path
+    context 'Non-author' do
+      it 'do not delete other owner question' do
+        expect { delete :destroy, id: question_other }.to_not change(Question, :count)
+      end
+
+      it 'redirect to question page' do
+        delete :destroy, id: question_other
+        expect(response).to redirect_to question_other
+      end
     end
   end
 end
