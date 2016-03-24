@@ -15,7 +15,7 @@
     <%= link_to 'New user', new_user_registration_path %>
   <% end %>
 </div>
-<div class="errors">
+<div id="errors">
   <% flash.each do |key, value| %>
     <div class="alert alert-<%= key %>"><%= value %></div>
   <% end %>

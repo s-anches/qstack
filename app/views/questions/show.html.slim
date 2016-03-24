@@ -1,24 +1,19 @@
-div.title
+.title
   = @question.title
-div.body
+.body
   = @question.body
-div.actions
+.actions
   - if user_signed_in? && current_user.author_of?(@question)
     = link_to 'Delete', @question, method: :delete
-div.answer
-  = form_for [@question, @answer] do |f|
-    div.body
-      = f.label :body
-      br
-      = f.text_area :body
-    div.actions
-      = f.submit "Save answer"
+- if user_signed_in?
+  .answer
+    = form_for [@question, @answer], remote: true do |f|
+      .body
+        = f.label :body, "Your answer"
+        br
+        = f.text_area :body
+      .actions
+        = f.submit "Save answer"
 
-div.answers
-  - @answers.each do |answer|
-    div.answer
-      = answer.body
-      - if user_signed_in? && current_user.author_of?(answer)
-        div.actions
-          = link_to 'Delete', question_answer_path(@question, answer), method: :delete,
-            class: "delete-answer-link"
+.answers
+  = render 'answers'

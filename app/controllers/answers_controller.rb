@@ -4,11 +4,7 @@ class AnswersController < ApplicationController
   before_action :load_answer, only: :destroy
 
   def create
-    @answer = @question.answers.new(answer_params.merge({ user: current_user }))
-    unless @answer.save
-      flash[:error] = "Invalid answer"
-    end
-    redirect_to @question
+    @answer = @question.answers.create(answer_params.merge({ user: current_user }))
   end
 
   def destroy

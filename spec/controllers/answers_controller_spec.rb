@@ -11,27 +11,22 @@ RSpec.describe AnswersController, type: :controller do
     context 'with valid attributes' do
 
       it 'save the new answer in the database' do
-        expect { post :create, question_id: question.id, answer: attributes_for(:answer) }.to change(question.answers, :count).by(1)
+        expect { post :create, question_id: question.id, answer: attributes_for(:answer), format: :js }.to change(question.answers, :count).by(1)
       end
 
       it 'new answer have owner' do
-        expect { post :create, question_id: question.id, answer: attributes_for(:answer) }.to change(user.answers, :count).by(1)
+        expect { post :create, question_id: question.id, answer: attributes_for(:answer), format: :js }.to change(user.answers, :count).by(1)
       end
 
-      it 'redirect to question page' do
-        post :create, question_id: question.id, answer: attributes_for(:answer)
-        expect(response).to redirect_to question_path(assigns(:answer).question)
+      it 'render create template' do
+        post :create, question_id: question.id, answer: attributes_for(:answer), format: :js
+        expect(response).to render_template :create
       end
     end
 
     context 'with invalid attributes' do
       it 'does not save the new answer in the database' do
-        expect { post :create, question_id: question.id, answer: attributes_for(:invalid_answer) }.to_not change(Answer, :count)
-      end
-
-      it 'redirect to question page' do
-        post :create, question_id: question.id, answer: attributes_for(:invalid_answer)
-        expect(response).to redirect_to question_path(assigns(:answer).question)
+        expect { post :create, question_id: question.id, answer: attributes_for(:invalid_answer), format: :js }.to_not change(Answer, :count)
       end
     end
   end
