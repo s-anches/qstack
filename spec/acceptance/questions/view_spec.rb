@@ -6,8 +6,7 @@ feature 'User can view all question', %q{
   I want to go to index page
 } do
 
-  given(:questions) { create_list(:question, 5) }
-  before { questions }
+  given!(:questions) { create_list(:question, 5) }
 
   scenario 'view all questions' do
     visit root_path
@@ -26,13 +25,8 @@ feature 'User can see question with answers', %q{
   I want to be able go to question page
 } do
 
-  given(:question) { create(:question) }
-  given(:answers) { create_list(:answer, 5, question: question) }
-
-  before do
-    question
-    answers
-  end
+  given!(:question) { create(:question) }
+  given!(:answers) { create_list(:answer, 5, question: question) }
 
   scenario 'see question with answers' do
     visit root_path
