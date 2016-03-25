@@ -1,6 +1,6 @@
 <% if @answer.errors.present? %>
   <%= render "layouts/error", errors: @answer.errors %>
 <% else %>
- $('.answers').append('<%= j render 'questions/answer', answer: @answer %>');
+ $('.answers').append('<%= j render @answer %>');
  $('.new_answer #answer_body').val('');
 <% end %>
