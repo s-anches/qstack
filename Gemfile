@@ -22,8 +22,10 @@ group :development, :test do
   gem 'byebug'
   gem 'rspec-rails'
   gem 'factory_girl_rails'
-  gem 'selenium-webdriver'
+  gem 'capybara-screenshot'
   gem 'database_cleaner'
+  gem 'poltergeist'
+  gem 'phantomjs', require: 'phantomjs/poltergeist'
 end
 
 group :test do

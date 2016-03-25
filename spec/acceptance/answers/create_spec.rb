@@ -1,4 +1,4 @@
-require 'rails_helper'
+require_relative '../../acceptance_helper'
 
 feature 'User answer', %q{
   In order to be able write answer to question
@@ -9,7 +9,7 @@ feature 'User answer', %q{
   given!(:user) { create :user }
   given!(:question) { create :question }
 
-  scenario 'Authenticated user with valid attributes', js: true do
+  scenario 'Authenticated user try to create answer', js: true do
     sign_in(user)
     visit question_path(question)
 
@@ -22,7 +22,7 @@ feature 'User answer', %q{
     end
   end
 
-  scenario 'Authenticated user with invalid attributes', js: true do
+  scenario 'Authenticated user try to create invalid answer', js: true do
     sign_in(user)
     visit question_path(question)
     click_on 'Save answer'

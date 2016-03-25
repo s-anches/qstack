@@ -1,4 +1,4 @@
-require 'rails_helper'
+require_relative '../../acceptance_helper'
 
 feature 'User can view all question', %q{
   In order to be view all question
