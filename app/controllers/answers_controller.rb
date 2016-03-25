@@ -1,7 +1,7 @@
 class AnswersController < ApplicationController
   before_action :authenticate_user!
   before_action :load_question, only: :create
-  before_action :load_answer, only: :destroy
+  before_action :load_answer, only: [:destroy, :update]
 
   def create
     @answer = @question.answers.create(answer_params.merge({ user: current_user }))
@@ -16,6 +16,10 @@ class AnswersController < ApplicationController
       flash[:error] = "You not have permissions."
     end
     redirect_to question
+  end
+
+  def update
+    @answer.update(answer_params) if current_user.author_of?(@answer)
   end
 
   private
