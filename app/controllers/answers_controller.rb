@@ -1,6 +1,6 @@
 class AnswersController < ApplicationController
   before_action :authenticate_user!
-  before_action :load_question
+  before_action :load_question, only: :create
   before_action :load_answer, only: :destroy
 
   def create
@@ -8,13 +8,14 @@ class AnswersController < ApplicationController
   end
 
   def destroy
+    question = @answer.question
     if current_user.author_of?(@answer)
       @answer.destroy
       flash[:notice] = "Answer succefully deleted."
     else
       flash[:error] = "You not have permissions."
     end
-    redirect_to @question
+    redirect_to question
   end
 
   private

@@ -2,5 +2,5 @@
   = answer.body
   - if user_signed_in? && current_user.author_of?(answer)
     .actions
-      = link_to 'Delete', question_answer_path(@question, answer), method: :delete,
+      = link_to 'Delete', answer_path(answer), method: :delete,
         class: "delete-answer-link"
