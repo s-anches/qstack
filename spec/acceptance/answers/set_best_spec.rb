@@ -9,6 +9,7 @@ feature 'Author can set best answer', %q{
   given(:user) { create :user }
   given(:question) { create(:question, user: user) }
   given!(:answer_one) { create(:answer, question: question) }
+  given!(:answer_two) { create(:answer, question: question, best: true) }
   given(:answer) { create(:answer) }
 
   describe 'Authenticated user' do
@@ -16,15 +17,28 @@ feature 'Author can set best answer', %q{
 
     scenario 'try to set best answer for his question', js: true do
       visit question_path(question)
-
-      within '.answers .answer .actions' do
+      within "#answer-#{answer_one.id}" do
         click_on 'Set best'
-      end
 
-      expect(page).to have_content 'Best'
+        expect(page).to have_content 'Best'
+      end
     end
 
-    # scenario 'try to change best answer for his question'
+    scenario 'try to change best answer for his question', js: true do
+      visit question_path(question)
+
+      within "#answer-#{answer_two.id}" do
+        expect(page).to have_content 'Best'
+      end
+      within "#answer-#{answer_one.id}" do
+        click_on 'Set best'
+
+        expect(page).to have_content 'Best'
+      end
+      within "#answer-#{answer_two.id}" do
+        expect(page).to_not have_content 'Best'
+      end
+    end
 
     scenario 'try to set best answer for foreign question' do
       visit question_path(answer.question)

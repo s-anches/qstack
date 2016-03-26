@@ -8,7 +8,15 @@ RSpec.describe Answer, type: :model do
   it { should belong_to(:user) }
   it { should belong_to(:question) }
 
-  let(:answer) { create(:answer) }
+  let(:question) { create(:question) }
+  let(:answer) { create(:answer, question: question) }
+  let(:answer_best) { create(:answer, question: question, best: true) }
+
+  describe 'default scope' do
+    it 'return best answer first' do
+      expect(question.reload.answers).to eq ([answer_best, answer])
+    end
+  end
 
   describe '#set_best method' do
     it 'set answer best' do
@@ -19,14 +27,14 @@ RSpec.describe Answer, type: :model do
       expect(answer.best?).to eq true
     end
 
-    # it 'set old best answer to false' do
-    #   expect(answer_best.best?).to eq true
+    it 'set old best answer to false' do
+      expect(answer_best.best).to eq true
 
-    #   answer_one.set_best
-    #   answer_best.reload
+      answer.set_best
+      answer_best.reload
 
-    #   expect(answer_best.best?).to eq false
-    #   expect(answer_one.best?).to eq true
-    # end
+      expect(answer_best.best?).to eq false
+      expect(answer.best?).to eq true
+    end
   end
 end

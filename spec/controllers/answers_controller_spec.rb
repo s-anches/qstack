@@ -5,6 +5,7 @@ RSpec.describe AnswersController, type: :controller do
   let(:question) { create(:question, user: user) }
   let!(:own_answer) { create(:answer, user: user, question: question) }
   let!(:foreign_answer) { create(:answer, question: question) }
+  let!(:foreign_answer_two) { create(:answer, question: question, best: true) }
   let(:answer) { create(:answer) }
 
   describe 'POST #create' do
@@ -109,6 +110,15 @@ RSpec.describe AnswersController, type: :controller do
       it 'render set_best template' do
         patch :set_best, id: foreign_answer, format: :js
         expect(response).to render_template :set_best
+      end
+
+      it 'change best answer on own question' do
+        expect(foreign_answer_two.best).to eq true
+        patch :set_best, id: foreign_answer, format: :js
+        foreign_answer.reload
+        foreign_answer_two.reload
+        expect(foreign_answer_two.best).to eq false
+        expect(foreign_answer.best).to eq true
       end
 
       it 'do not set best answer flag on foreign question' do

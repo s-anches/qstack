@@ -4,6 +4,8 @@ class Answer < ActiveRecord::Base
 
   validates :user_id, :question_id, :body, presence: true
 
+  default_scope -> { order(best: :desc) }
+
   def set_best
     ActiveRecord::Base.transaction do
       self.question.answers.update_all(best: false)
