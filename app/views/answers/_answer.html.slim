@@ -10,3 +10,10 @@
           = f.label :body, "Answer"
           = f.text_area :body
           = f.submit "Save"
+    - if user_signed_in? && current_user.author_of?(answer.question)
+      .actions
+        = link_to 'Set best', set_best_answer_path(answer), method: :patch, remote: true
+    - if answer.best
+      .status
+        b Best
+  hr

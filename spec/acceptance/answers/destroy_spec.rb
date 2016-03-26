@@ -11,8 +11,9 @@ feature 'User can delete only his answer', %q{
   given(:foreign_answer) { create(:answer) }
 
   describe 'Authenticated user' do
+    before { sign_in(user) }
+
     scenario 'try to delete his answer', js: true do
-      sign_in(user)
       visit question_path(own_answer.question)
 
       within '.answers .answer .actions' do
@@ -23,7 +24,6 @@ feature 'User can delete only his answer', %q{
     end
 
     scenario 'try to delete foreign answer' do
-      sign_in(user)
       visit question_path(foreign_answer.question)
 
       expect(page).to_not have_link 'Delete'

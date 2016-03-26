@@ -2,9 +2,10 @@ require 'rails_helper'
 
 RSpec.describe AnswersController, type: :controller do
   let(:user) { create :user }
-  let(:question) { create(:question) }
+  let(:question) { create(:question, user: user) }
   let!(:own_answer) { create(:answer, user: user, question: question) }
   let!(:foreign_answer) { create(:answer, question: question) }
+  let(:answer) { create(:answer) }
 
   describe 'POST #create' do
     before { sign_in(user) }
@@ -91,6 +92,37 @@ RSpec.describe AnswersController, type: :controller do
         patch :update, id: own_answer, answer: { body: 'new body' }, format: :js
         own_answer.reload
         expect(own_answer.body).to_not eq 'new body'
+      end
+    end
+  end
+
+  describe 'PATCH #set_best' do
+    context 'Authenticated user' do
+      before { sign_in(user) }
+
+      it 'set best answer flag on own question' do
+        patch :set_best, id: foreign_answer, format: :js
+        foreign_answer.reload
+        expect(foreign_answer.best).to eq true
+      end
+
+      it 'render set_best template' do
+        patch :set_best, id: foreign_answer, format: :js
+        expect(response).to render_template :set_best
+      end
+
+      it 'do not set best answer flag on foreign question' do
+        patch :set_best, id: answer, format: :js
+        answer.reload
+        expect(answer.best).to eq false
+      end
+    end
+
+    context 'Non-authenticated user' do
+      it 'do not set best answer flag on any question' do
+        patch :set_best, id: own_answer, format: :js
+        own_answer.reload
+        expect(own_answer.best).to eq false
       end
     end
   end
