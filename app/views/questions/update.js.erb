@@ -1,0 +1,5 @@
+<% if @question.errors.present? %>
+  <%= render "layouts/error", errors: @question.errors %>
+<% else %>
+ $('.question').html('<%= j render @question %>');
+<% end %>

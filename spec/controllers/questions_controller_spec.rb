@@ -2,10 +2,10 @@ require 'rails_helper'
 
 RSpec.describe QuestionsController, type: :controller do
   let(:user) { create :user }
-  let(:question) { create :question, user: user }
-  let(:question_other) { create :question }
+  let(:own_question) { create :question, user: user }
+  let(:foreign_question) { create :question }
   let(:questions) { create_list :question, 2 }
-  let(:answers) { create_list(:answer, 5, question: question) }
+  let(:answers) { create_list(:answer, 5, question: own_question) }
 
   before { @request.env['devise.mapping'] = Devise.mappings[:user] }
 
@@ -21,10 +21,10 @@ RSpec.describe QuestionsController, type: :controller do
   end
 
   describe 'GET #show' do
-    before { get :show, id: question }
+    before { get :show, id: own_question }
 
     it 'assigns the requested question' do
-      expect(assigns(:question)).to eq question
+      expect(assigns(:question)).to eq own_question
     end
 
     it 'assigns the requested answers to question' do
@@ -84,29 +84,68 @@ RSpec.describe QuestionsController, type: :controller do
   describe 'DELETE #destroy' do
     before do
       sign_in(user)
-      question
-      question_other
+      own_question
+      foreign_question
     end
 
     context 'Author' do
       it 'delete his question' do
-        expect { delete :destroy, id: question }.to change(Question, :count).by(-1)
+        expect { delete :destroy, id: own_question }.to change(Question, :count).by(-1)
       end
 
       it 'redirect to index view' do
-        delete :destroy, id: question
+        delete :destroy, id: own_question
         expect(response).to redirect_to questions_path
       end
     end
 
     context 'Non-author' do
       it 'do not delete other owner question' do
-        expect { delete :destroy, id: question_other }.to_not change(Question, :count)
+        expect { delete :destroy, id: foreign_question }.to_not change(Question, :count)
       end
 
       it 'redirect to question page' do
-        delete :destroy, id: question_other
-        expect(response).to redirect_to question_other
+        delete :destroy, id: foreign_question
+        expect(response).to redirect_to foreign_question
+      end
+    end
+  end
+
+  describe 'PATCH #update' do
+    context 'Authenticated user' do
+      before { sign_in(user) }
+
+      it 'assigns the requested question to @question' do
+        patch :update, id: own_question, question: attributes_for(:question), format: :js
+        expect(assigns(:question)).to eq own_question
+      end
+
+      it 'change his question attributes' do
+        patch :update, id: own_question, question: { title: 'Edited title', body: 'Edited body' }, format: :js
+        own_question.reload
+        expect(own_question.title).to eq 'Edited title'
+        expect(own_question.body).to eq 'Edited body'
+      end
+
+      it 'do not change foreign question attributes' do
+        patch :update, id: foreign_question, question: { title: 'Edited title', body: 'Edited body' }, format: :js
+        foreign_question.reload
+        expect(foreign_question.title).to_not eq 'Edited title'
+        expect(foreign_question.body).to_not eq 'Edited body'
+      end
+
+      it 'render update template' do
+        patch :update, id: own_question, question: attributes_for(:question), format: :js
+        expect(response).to render_template :update
+      end
+    end
+
+    context 'Non-authenticated user' do
+      it 'do not change question attributes' do
+        patch :update, id: own_question, question: { title: 'Edited title', body: 'Edited body' }, format: :js
+        own_question.reload
+        expect(own_question.title).to_not eq 'Edited title'
+        expect(own_question.body).to_not eq 'Edited body'
       end
     end
   end

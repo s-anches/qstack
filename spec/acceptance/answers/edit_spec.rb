@@ -27,7 +27,7 @@ feature 'Answer editing', %q{
       expect(page).to have_content 'new answer body'
     end
 
-    scenario 'try to edit other owner answer' do
+    scenario 'try to edit foreign answer' do
       visit question_path(foreign_answer.question)
 
       expect(page).to_not have_link 'Edit'
