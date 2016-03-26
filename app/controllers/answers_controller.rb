@@ -8,14 +8,7 @@ class AnswersController < ApplicationController
   end
 
   def destroy
-    question = @answer.question
-    if current_user.author_of?(@answer)
-      @answer.destroy
-      flash[:notice] = "Answer succefully deleted."
-    else
-      flash[:error] = "You not have permissions."
-    end
-    redirect_to question
+    @answer.destroy if current_user.author_of?(@answer)
   end
 
   def update

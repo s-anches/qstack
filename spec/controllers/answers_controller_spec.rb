@@ -38,23 +38,23 @@ RSpec.describe AnswersController, type: :controller do
 
     context 'Author' do
       it 'delete his answer' do
-        expect { delete :destroy, id: own_answer }.to change(Answer, :count).by(-1)
+        expect { delete :destroy, id: own_answer, format: :js }.to change(Answer, :count).by(-1)
       end
 
-      it 'redirect to question page' do
-        delete :destroy, id: own_answer
-        expect(response).to redirect_to question
+      it 'render destroy template' do
+        delete :destroy, id: own_answer, format: :js
+        expect(response).to render_template :destroy
       end
     end
 
     context 'Non-author' do
       it 'do not delete other owner answer' do
-        expect { delete :destroy, id: foreign_answer }.to_not change(Answer, :count)
+        expect { delete :destroy, id: foreign_answer, format: :js }.to_not change(Answer, :count)
       end
 
-      it 'redirect to question page' do
-        delete :destroy, id: foreign_answer
-        expect(response).to redirect_to question
+      it 'render destroy template' do
+        delete :destroy, id: foreign_answer, format: :js
+        expect(response).to render_template :destroy
       end
     end
   end

@@ -5,7 +5,7 @@
       .actions
         = link_to 'Edit', '#', id: answer.id, class: 'edit_answer'
         = link_to 'Delete', answer_path(answer), method: :delete,
-          class: "delete-answer-link"
+          class: "delete-answer-link", remote: true
         = form_for answer, remote: true do |f|
           = f.label :body, "Answer"
           = f.text_area :body
