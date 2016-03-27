@@ -4,9 +4,7 @@
   = @question.body
 .attachments
   p Attachments:
-  ul
-    - @question.attachments.each do |a|
-      li= link_to a.file.identifier, a.file.url
+  = render 'layouts/attachments', attachments: @question.attachments
 .actions
   - if user_signed_in? && current_user.author_of?(@question)
     = link_to 'Edit', '#', class: 'edit_question'

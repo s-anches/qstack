@@ -1,6 +1,9 @@
 - if answer.persisted?
   .answer id = 'answer-#{answer.id}'
     = answer.body
+    .attachments
+      p Attachments:
+      = render 'layouts/attachments', attachments: answer.attachments
     - if user_signed_in? && current_user.author_of?(answer)
       .actions
         = link_to 'Edit', '#', id: answer.id, class: 'edit_answer'

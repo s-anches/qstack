@@ -7,6 +7,8 @@
         = f.label :body, "Your answer"
         br
         = f.text_area :body
+        = f.fields_for :attachments do |attach|
+          = render 'layouts/attachment_fields', f: attach
       .actions
         = f.submit "Save answer"
 hr
