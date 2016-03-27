@@ -2,6 +2,11 @@
   = @question.title
 .body
   = @question.body
+.attachments
+  p Attachments:
+  ul
+    - @question.attachments.each do |a|
+      li= a.file.file.filename
 .actions
   - if user_signed_in? && current_user.author_of?(@question)
     = link_to 'Edit', '#', class: 'edit_question'
