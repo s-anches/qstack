@@ -4,4 +4,6 @@ class Question < ActiveRecord::Base
   has_many :attachments, dependent: :destroy
 
   validates :user_id, :title, :body, presence: true
+
+  accepts_nested_attributes_for :attachments
 end
