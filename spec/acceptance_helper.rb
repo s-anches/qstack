@@ -23,7 +23,7 @@ require 'capybara/poltergeist'
 
     config.after(:each) do
       DatabaseCleaner.clean
-      # FileUtils.rm_rf(Dir["#{Rails.root}/public/uploads"])
+      FileUtils.rm_rf(Dir["#{Rails.root}/public/uploads"])
     end
 
     Capybara.javascript_driver = :poltergeist

@@ -13,13 +13,16 @@ feature 'Add files to question', %q{
     visit new_question_path
   end
 
-  scenario 'User adds file when ask question' do
+  scenario 'User adds files when ask question', js: true do
     fill_in 'Title', with: 'New question'
     fill_in 'Body', with: 'New body of question'
-    attach_file 'File', "#{Rails.root}/spec/rails_helper.rb"
+    click_on 'Add more'
+    all("input[type='file']").first.set("#{Rails.root}/config.ru")
+    all("input[type='file']").last.set("#{Rails.root}/Gemfile")
     click_on 'Save'
 
-    expect(page).to have_link 'rails_helper.rb', href: '/uploads/attachment/file/1/rails_helper.rb'
+    expect(page).to have_link 'config.ru', href: '/uploads/attachment/file/1/config.ru'
+    expect(page).to have_link 'Gemfile', href: '/uploads/attachment/file/2/Gemfile'
   end
 
 end

@@ -9,5 +9,7 @@
     = f.text_area :body
     = f.fields_for :attachments do |attach|
       = render 'layouts/attachment_fields', f: attach
+      = link_to_add_association 'Add more', f, :attachments,
+        partial: 'layouts/attachment_fields'
   div.actions
     = f.submit "Save"
