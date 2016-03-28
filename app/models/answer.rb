@@ -5,7 +5,9 @@ class Answer < ActiveRecord::Base
 
   validates :user_id, :question_id, :body, presence: true
 
-  accepts_nested_attributes_for :attachments
+  accepts_nested_attributes_for :attachments,
+          reject_if: proc{ |param| param[:file].blank? },
+          allow_destroy: true
 
   default_scope -> { order(best: :desc) }
 

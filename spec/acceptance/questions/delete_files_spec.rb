@@ -26,4 +26,10 @@ feature 'Delete files from question', %q{
     expect(page).to_not have_link 'Gemfile'
   end
 
+  scenario 'User can not delete files from foreign author question' do
+    visit question_path(foreign_question)
+
+    expect(page).to_not have_link 'Edit'
+  end
+
 end

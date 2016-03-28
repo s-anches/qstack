@@ -12,6 +12,15 @@
         = form_for answer, remote: true do |f|
           = f.label :body, "Answer"
           = f.text_area :body
+          .attachments
+            = link_to_add_association 'Add more', f, :attachments,
+              partial: 'layouts/attachment_fields'
+            ul
+              = f.fields_for :attachments do |a|
+                - attachment = a.object
+                li
+                  = attachment.file.identifier
+                  = a.check_box :_destroy, id: "remove-attachment-#{attachment.id}"
           = f.submit "Save"
     - if user_signed_in? && current_user.author_of?(answer.question)
       .actions
