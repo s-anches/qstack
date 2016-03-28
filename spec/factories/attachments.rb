@@ -1,5 +1,5 @@
 FactoryGirl.define do
   factory :attachment do
-    file "MyString"
+    file { Rack::Test::UploadedFile.new(File.join(Rails.root, 'Gemfile')) }
   end
 end

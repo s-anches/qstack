@@ -5,5 +5,7 @@ class Question < ActiveRecord::Base
 
   validates :user_id, :title, :body, presence: true
 
-  accepts_nested_attributes_for :attachments
+  accepts_nested_attributes_for :attachments,
+          reject_if: proc{ |param| param[:file].blank? },
+          allow_destroy: true
 end
