@@ -2,9 +2,19 @@ Rails.application.routes.draw do
   devise_for :users
   root 'questions#index'
 
-  resources :questions do
+  concern :votable do
+    member do
+      patch 'like'
+      patch 'dislike'
+      delete 'unvote'
+    end
+  end
+
+  resources :questions, concerns: :votable do
     resources :answers, shallow: true do
-      patch 'set_best', on: :member
+      member do
+        patch 'set_best'
+      end
     end
   end
   # The priority is based upon order of creation: first created -> highest priority.
