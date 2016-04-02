@@ -2,6 +2,20 @@
   = @question.title
 .body
   = @question.body
+.rating
+  .votes-count
+    | Rating:&nbsp;
+    = @question.rating
+  - if user_signed_in? && !current_user.author_of?(@question)
+    = link_to '-', dislike_question_path,
+      method: :patch,
+      remote: true,
+      class: 'question-link-dislike'
+    = link_to '+', like_question_path,
+      method: :patch,
+      remote: true,
+      class: 'question-link-like'
+
 .attachments
   p Attachments:
   = render 'layouts/attachments', attachments: @question.attachments

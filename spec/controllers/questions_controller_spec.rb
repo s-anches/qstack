@@ -157,4 +157,41 @@ RSpec.describe QuestionsController, type: :controller do
       end
     end
   end
+
+  describe 'PATCH #like' do
+    context 'Authenticated user' do
+      before { sign_in(user) }
+
+      it 'can not like own question' do
+        expect{ patch :like, id: own_question, format: :json}.to_not change(own_question.votes, :count)
+      end
+
+      it 'can like foreign question' do
+        expect{ patch :like, id: foreign_question, format: :json }.to change(foreign_question.votes, :count).by(1)
+      end
+
+      it 'can like only once' do
+        expect{ patch :like, id: foreign_question, format: :json }.to change(foreign_question.votes, :count).by(1)
+        expect{ patch :like, id: foreign_question, format: :json }.to_not change(foreign_question.votes, :count)
+      end
+
+      it 'render json' do
+        json = %({"object": #{foreign_question.id}, "rating": 1})
+        patch :like, id: foreign_question, format: :json
+        expect(response.body).to be_json_eql(json)
+      end
+    end
+
+    context 'Non-authenticated user' do
+      it 'can not like question' do
+        expect{ patch :like, id: foreign_question, format: :json }.to_not change(Vote, :count)
+      end
+
+      it 'render json' do
+        json = %({"error": "You need to sign in or sign up before continuing."})
+        patch :like, id: foreign_question, format: :json
+        expect(response.body).to be_json_eql(json)
+      end
+    end
+  end
 end
