@@ -1,0 +1,30 @@
+- dislike_class = ""
+- like_class = ""
+- unvote_class = ""
+
+- if answer.votes.exists?(user: current_user)
+  - if answer.is_liked?(current_user)
+    - like_class = 'liked not-active'
+    - dislike_class = 'not-active'
+  - else
+    - like_class = 'not-active'
+    - dislike_class = 'disliked not-active'
+- else
+  - unvote_class = 'not-active'
+
+ul.nav.nav-pills
+  li = link_to '-', dislike_answer_path(answer),
+    method: :patch,
+    remote: true,
+    class: "answer-link-dislike #{dislike_class}",
+    data: { id: answer.id }
+  li = link_to '+', like_answer_path(answer),
+    method: :patch,
+    remote: true,
+    class: "answer-link-like #{like_class}",
+    data: { id: answer.id }
+  li = link_to 'Unvote', unvote_answer_path(answer),
+    method: :delete,
+    remote: true,
+    class: "answer-link-unvote #{unvote_class}",
+    data: { id: answer.id }

@@ -1,7 +1,7 @@
 require_relative '../../acceptance_helper'
 
 feature 'User can vote for question', %q{
-  In order to be able up rating of question
+  In order to be able up/down rating of question
   As an authenticated user
   I want to vote for question
 } do
@@ -47,16 +47,9 @@ feature 'User can vote for question', %q{
       expect(page).to have_content('Rating: 1')
 
       sign_out
-      sign_in(user_two)
-      visit question_path(foreign_question)
-      click_on '+'
-
-      expect(page).to have_content('Rating: 2')
-
-      sign_out
       visit question_path(foreign_question)
 
-      expect(page).to have_content('Rating: 2')
+      expect(page).to have_content('Rating: 1')
     end
   end
 

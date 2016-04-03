@@ -136,4 +136,105 @@ RSpec.describe AnswersController, type: :controller do
       end
     end
   end
+
+  describe 'PATCH #like' do
+    context 'Authenticated user' do
+      before { sign_in(user) }
+
+      it 'can not like own answer' do
+        expect{ patch :like, id: own_answer, format: :json}.to_not change(own_answer.votes, :count)
+      end
+
+      it 'can like foreign answer' do
+        expect{ patch :like, id: foreign_answer, format: :json }.to change(foreign_answer.votes, :count).by(1)
+      end
+
+      it 'can like only once' do
+        expect{ patch :like, id: foreign_answer, format: :json }.to change(foreign_answer.votes, :count).by(1)
+        expect{ patch :like, id: foreign_answer, format: :json }.to_not change(foreign_answer.votes, :count)
+      end
+
+      it 'render json' do
+        json = %({"object": #{foreign_answer.id}, "rating": 1})
+        patch :like, id: foreign_answer, format: :json
+        expect(response.body).to be_json_eql(json)
+      end
+    end
+
+    context 'Non-authenticated user' do
+      it 'can not like answer' do
+        expect{ patch :like, id: foreign_answer, format: :json }.to_not change(Vote, :count)
+      end
+
+      it 'render json' do
+        json = %({"error": "You need to sign in or sign up before continuing."})
+        patch :like, id: foreign_answer, format: :json
+        expect(response.body).to be_json_eql(json)
+      end
+    end
+  end
+
+  describe 'PATCH #dislike' do
+    context 'Authenticated user' do
+      before { sign_in(user) }
+
+      it 'can not dislike own answer' do
+        expect{ patch :dislike, id: own_answer, format: :json}.to_not change(own_answer.votes, :count)
+      end
+
+      it 'can dislike foreign answer' do
+        expect{ patch :dislike, id: foreign_answer, format: :json }.to change(foreign_answer.votes, :count).by(1)
+      end
+
+      it 'can dislike only once' do
+        expect{ patch :dislike, id: foreign_answer, format: :json }.to change(foreign_answer.votes, :count).by(1)
+        expect{ patch :dislike, id: foreign_answer, format: :json }.to_not change(foreign_answer.votes, :count)
+      end
+
+      it 'render json' do
+        json = %({"object": #{foreign_answer.id}, "rating": -1})
+        patch :dislike, id: foreign_answer, format: :json
+        expect(response.body).to be_json_eql(json)
+      end
+    end
+
+    context 'Non-authenticated user' do
+      it 'can not dislike answer' do
+        expect{ patch :dislike, id: foreign_answer, format: :json }.to_not change(Vote, :count)
+      end
+
+      it 'render json' do
+        json = %({"error": "You need to sign in or sign up before continuing."})
+        patch :dislike, id: foreign_answer, format: :json
+        expect(response.body).to be_json_eql(json)
+      end
+    end
+  end
+
+  describe 'DELETE #unvote' do
+    context 'Authenticated user' do
+      before do
+        sign_in(user)
+        patch :like, id: foreign_answer, format: :json
+      end
+
+      it 'Owner can delete his vote' do
+        expect { delete :unvote, id: foreign_answer, format: :json }.to change(foreign_answer.votes, :count).by(-1)
+      end
+
+      it 'render json success' do
+        json = %({"object": #{foreign_answer.id}, "rating": 0})
+        delete :unvote, id: foreign_answer, format: :json
+        expect(response.body).to be_json_eql(json)
+      end
+
+      it 'render json error' do
+        json = %({"errors": "Object not found"})
+        delete :unvote, id: foreign_answer, format: :json
+        delete :unvote, id: foreign_answer, format: :json
+        expect(response.status).to eq 404
+        expect(response.body).to be_json_eql(json)
+      end
+    end
+  end
 end

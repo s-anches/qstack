@@ -1,6 +1,6 @@
 ready = ->
   $('.edit_question').click (e) ->
-    $('form.edit_question').show();
+    $('form.edit_question').show()
 
   $('.question-link-like').bind "ajax:success", (e, data, status, xhr) ->
     response = $.parseJSON(xhr.responseText)
