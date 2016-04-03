@@ -231,4 +231,31 @@ RSpec.describe QuestionsController, type: :controller do
       end
     end
   end
+
+  describe 'DELETE #unvote' do
+    context 'Authenticated user' do
+      before do
+        sign_in(user)
+        patch :like, id: foreign_question, format: :json
+      end
+
+      it 'Owner can delete his vote' do
+        expect { delete :unvote, id: foreign_question, format: :json }.to change(foreign_question.votes, :count).by(-1)
+      end
+
+      it 'render json success' do
+        json = %({"object": #{foreign_question.id}, "rating": 0})
+        delete :unvote, id: foreign_question, format: :json
+        expect(response.body).to be_json_eql(json)
+      end
+
+      it 'render json error' do
+        json = %({"errors": "Object not found"})
+        delete :unvote, id: foreign_question, format: :json
+        delete :unvote, id: foreign_question, format: :json
+        expect(response.status).to eq 404
+        expect(response.body).to be_json_eql(json)
+      end
+    end
+  end
 end

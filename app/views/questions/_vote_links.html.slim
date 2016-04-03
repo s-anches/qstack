@@ -1,0 +1,25 @@
+- dislike_class = ""
+- like_class = ""
+- unvote_class = ""
+
+- if @question.votes.exists?(user: current_user)
+  - if @question.is_liked?(current_user)
+    - like_class = 'liked not-active'
+  - else
+    - dislike_class = 'disliked not-active'
+- else
+  - unvote_class = 'not-active'
+
+ul.nav.nav-pills
+  li = link_to '-', dislike_question_path,
+    method: :patch,
+    remote: true,
+    class: "question-link-dislike #{dislike_class}"
+  li = link_to '+', like_question_path,
+    method: :patch,
+    remote: true,
+    class: "question-link-like #{like_class}"
+  li = link_to 'Unvote', unvote_question_path,
+    method: :delete,
+    remote: true,
+    class: "question-link-unvote #{unvote_class}"

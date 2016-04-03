@@ -7,32 +7,63 @@ feature 'User can vote for question', %q{
 } do
 
   given(:user) { create(:user) }
+  given(:user_two) { create(:user) }
   given(:own_question) { create(:question, user: user) }
   given(:foreign_question) { create(:question) }
 
   describe 'Authenticated user' do
-    before { sign_in(user) }
-    scenario 'can like foreign question', js: true do
+
+    before do
+      sign_in(user)
       visit question_path(foreign_question)
-      expect(page).to have_content('Rating: 0')
+    end
+
+    scenario 'can like foreign question', js: true do
       click_on '+'
 
       expect(page).to have_content('Rating: 1')
     end
 
     scenario 'can dislike foreign question', js: true do
-      visit question_path(foreign_question)
+      click_on '-'
+
+      expect(page).to have_content('Rating: -1')
+    end
+
+    scenario 'can change his resolution', js: true do
+      click_on '+'
+
+      expect(page).to have_content('Rating: 1')
+      click_on 'Unvote'
       expect(page).to have_content('Rating: 0')
       click_on '-'
 
       expect(page).to have_content('Rating: -1')
     end
 
-    scenario 'can not vote for his question' do
-      visit question_path(own_question)
+    scenario 'All can see rating', js: true do
+      click_on '+'
 
-      expect(page).to_not have_link('+')
+      expect(page).to have_content('Rating: 1')
+
+      sign_out
+      sign_in(user_two)
+      visit question_path(foreign_question)
+      click_on '+'
+
+      expect(page).to have_content('Rating: 2')
+
+      sign_out
+      visit question_path(foreign_question)
+
+      expect(page).to have_content('Rating: 2')
     end
+  end
+
+  scenario 'can not vote for his question' do
+    visit question_path(own_question)
+
+    expect(page).to_not have_link('+')
   end
 
   scenario 'Non-authenticated user can not vote' do
