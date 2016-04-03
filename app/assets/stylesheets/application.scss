@@ -1,0 +1,18 @@
+@import "bootstrap-sprockets";
+@import "bootstrap";
+@import "questions";
+@import "answers";
+
+.not-active {
+   pointer-events: none;
+   cursor: default;
+   color: black;
+ }
+
+ .liked {
+  background: green;
+ }
+
+ .disliked {
+  background: red;
+ }
