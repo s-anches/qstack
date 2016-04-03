@@ -12,12 +12,20 @@ feature 'User can vote for question', %q{
 
   describe 'Authenticated user' do
     before { sign_in(user) }
-    scenario 'can vote for foreign question', js: true do
+    scenario 'can like foreign question', js: true do
       visit question_path(foreign_question)
       expect(page).to have_content('Rating: 0')
       click_on '+'
 
       expect(page).to have_content('Rating: 1')
+    end
+
+    scenario 'can dislike foreign question', js: true do
+      visit question_path(foreign_question)
+      expect(page).to have_content('Rating: 0')
+      click_on '-'
+
+      expect(page).to have_content('Rating: -1')
     end
 
     scenario 'can not vote for his question' do

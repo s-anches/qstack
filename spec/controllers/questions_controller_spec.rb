@@ -194,4 +194,41 @@ RSpec.describe QuestionsController, type: :controller do
       end
     end
   end
+
+  describe 'PATCH #dislike' do
+    context 'Authenticated user' do
+      before { sign_in(user) }
+
+      it 'can not dislike own question' do
+        expect{ patch :dislike, id: own_question, format: :json}.to_not change(own_question.votes, :count)
+      end
+
+      it 'can dislike foreign question' do
+        expect{ patch :dislike, id: foreign_question, format: :json }.to change(foreign_question.votes, :count).by(1)
+      end
+
+      it 'can dislike only once' do
+        expect{ patch :dislike, id: foreign_question, format: :json }.to change(foreign_question.votes, :count).by(1)
+        expect{ patch :dislike, id: foreign_question, format: :json }.to_not change(foreign_question.votes, :count)
+      end
+
+      it 'render json' do
+        json = %({"object": #{foreign_question.id}, "rating": -1})
+        patch :dislike, id: foreign_question, format: :json
+        expect(response.body).to be_json_eql(json)
+      end
+    end
+
+    context 'Non-authenticated user' do
+      it 'can not dislike question' do
+        expect{ patch :dislike, id: foreign_question, format: :json }.to_not change(Vote, :count)
+      end
+
+      it 'render json' do
+        json = %({"error": "You need to sign in or sign up before continuing."})
+        patch :dislike, id: foreign_question, format: :json
+        expect(response.body).to be_json_eql(json)
+      end
+    end
+  end
 end
