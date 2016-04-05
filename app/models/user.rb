@@ -11,6 +11,6 @@ class User < ActiveRecord::Base
   end
 
   def is_liked?(object)
-    object.votes.where('value > ?', 0).exists?
+    votes.where(votable: object).where('value > ?', 0).exists?
   end
 end
