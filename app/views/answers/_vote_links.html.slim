@@ -3,7 +3,7 @@
 - unvote_class = ""
 
 - if answer.votes.exists?(user: current_user)
-  - if answer.is_liked?(current_user)
+  - if current_user.is_liked?(answer)
     - like_class = 'liked not-active'
     - dislike_class = 'not-active'
   - else

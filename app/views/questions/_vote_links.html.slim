@@ -3,7 +3,7 @@
 - unvote_class = ""
 
 - if @question.votes.exists?(user: current_user)
-  - if @question.is_liked?(current_user)
+  - if current_user.is_liked?(@question)
     - like_class = 'liked not-active'
   - else
     - dislike_class = 'disliked not-active'
