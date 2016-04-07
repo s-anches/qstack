@@ -6,7 +6,7 @@ h1 = @question.title
     = @question.rating
   - if user_signed_in? && !current_user.author_of?(@question)
     .vote_links
-      = render 'vote_links'
+      = render 'layouts/vote_links', object: @question
 
 .attachments
   p Attachments:

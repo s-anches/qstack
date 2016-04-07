@@ -1,2 +1,2 @@
 $('.answer .status').remove();
-$('#answer-<%= @answer.id %>').append('<div class="status"><b>Best</b></div>');
+$('div[data-id="<%= @answer.id %>"][data-object="answer"]').append('<div class="status"><b>Best</b></div>');

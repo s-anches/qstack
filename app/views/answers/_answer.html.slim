@@ -1,5 +1,5 @@
 - if answer.persisted?
-  .answer id = 'answer-#{answer.id}'
+  .answer data-id = answer.id data-object='answer'
     = answer.body
     .rating
       .votes-count
@@ -7,7 +7,7 @@
         = answer.rating
       - if user_signed_in? && !current_user.author_of?(answer)
         .vote_links
-          = render 'answers/vote_links', answer: answer
+          = render 'layouts/vote_links', object: answer
     .attachments
       p Attachments:
       = render 'layouts/attachments', attachments: answer.attachments

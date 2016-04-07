@@ -32,6 +32,12 @@ RSpec.shared_examples_for 'votable' do
     end
   end
 
+  describe 'voted?' do
+    it 'return true if user already voted' do
+      expect(user.voted?(model)).to eq true
+    end
+  end
+
   describe 'rating' do
     it 'return average rating of model' do
       expect(model.rating).to eq 1

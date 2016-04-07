@@ -17,7 +17,7 @@ feature 'Author can set best answer', %q{
 
     scenario 'try to set best answer for his question', js: true do
       visit question_path(question)
-      within "#answer-#{answer_one.id}" do
+      within "div[data-id='#{answer_one.id}'][data-object='answer']" do
         click_on 'Set best'
 
         expect(page).to have_content 'Best'
@@ -27,15 +27,15 @@ feature 'Author can set best answer', %q{
     scenario 'try to change best answer for his question', js: true do
       visit question_path(question)
 
-      within "#answer-#{answer_two.id}" do
+      within "div[data-id='#{answer_two.id}'][data-object='answer']" do
         expect(page).to have_content 'Best'
       end
-      within "#answer-#{answer_one.id}" do
+      within "div[data-id='#{answer_one.id}'][data-object='answer']" do
         click_on 'Set best'
 
         expect(page).to have_content 'Best'
       end
-      within "#answer-#{answer_two.id}" do
+      within "div[data-id='#{answer_two.id}'][data-object='answer']" do
         expect(page).to_not have_content 'Best'
       end
     end
