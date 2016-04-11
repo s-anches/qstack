@@ -16,3 +16,5 @@
 hr
 .answers
   = render @question.answers
+
+= subscribe_to "/questions/#{@question.id}/answers"
