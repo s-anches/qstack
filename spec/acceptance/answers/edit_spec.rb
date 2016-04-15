@@ -16,13 +16,13 @@ feature 'Answer editing', %q{
     scenario 'try to edit his answer', js: true do
       visit question_path(own_answer.question)
 
-      within "div[data-id='#{own_answer.id}'][data-object='answer'] .actions" do
+      within "div[data-id='#{own_answer.id}'][data-object='answer']" do
         click_on 'Edit'
-        fill_in 'Answer', with: 'new answer body'
-        click_on 'Save'
-
-        expect(page).to_not have_selector 'textarea'
       end
+      fill_in 'answer_body', with: 'new answer body'
+      click_on 'Save'
+
+      expect(page).to_not have_selector 'textarea'
       expect(page).to_not have_content own_answer.body
       expect(page).to have_content 'new answer body'
     end

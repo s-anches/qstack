@@ -1,15 +1,27 @@
-= form_for @question do |f|
-  div.field
-    = f.label :title
-    br
-    = f.text_field :title
-  div.field
-    = f.label :body
-    br
-    = f.text_area :body
-    = f.fields_for :attachments do |attach|
-      = render 'layouts/attachment_fields', f: attach
-      = link_to_add_association 'Add more', f, :attachments,
-        partial: 'layouts/attachment_fields'
-  div.actions
-    = f.submit "Save"
+= form_for @question, remote: true, html: { class: "form-horizontal edit_question" } do |f|
+  .row
+    .col-xs-1.col-xs-offset-11
+      = link_to '#', class: "link-close" do
+        span.glyphicon.glyphicon-remove
+  .row
+    .col-xs-12
+      .form-group
+        .col-sm-2
+          = f.label :title, class: "control-label"
+        .col-sm-10
+          = f.text_field :title, class: "form-control"
+      .form-group
+        .col-sm-2
+          = f.label :body, class: "control-label"
+        .col-sm-10
+          = f.text_area :body, class: "form-control"
+      .attachments_form
+        = f.fields_for :attachments do |attachment|
+          = render 'layouts/attachment_fields', f: attachment, object: @question
+      .form-group
+        .col-sm-offset-2.col-sm-10.add_attachment
+          = link_to_add_association 'Add more', f, :attachments,
+            partial: 'layouts/attachment_fields', class: "btn btn-default"
+      .form-group
+        .col-sm-offset-2.col-sm-10
+          = f.submit "Save", class: "btn btn-default"

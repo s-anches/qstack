@@ -1,32 +1,16 @@
-h1 = @question.title
-= @question.body
-.rating
-  .votes-count
-    | Rating:&nbsp;
-    = @question.rating
-  - if user_signed_in? && !current_user.author_of?(@question)
-    .vote_links
+.row
+  .col-xs-2.votes
+    .row
       = render 'layouts/vote_links', object: @question
-
-.attachments
-  p Attachments:
-  = render 'layouts/attachments', attachments: @question.attachments
-.actions
-  - if user_signed_in? && current_user.author_of?(@question)
-    = link_to 'Edit', '#', class: 'edit_question'
-    = link_to 'Delete', @question, method: :delete
-    = form_for @question, remote: true do |f|
-      = f.label :title, 'Title'
-      = f.text_field :title
-      = f.label :body, 'Body'
-      = f.text_area :body
-      .attachments
-        = link_to_add_association 'Add more', f, :attachments,
-          partial: 'layouts/attachment_fields'
-        ul
-          = f.fields_for :attachments do |a|
-            - attachment = a.object
-            li
-              = attachment.file.identifier
-              = a.check_box :_destroy, id: "remove-attachment-#{attachment.id}"
-      = f.submit 'Save'
+  .col-xs-9.col-xs-offset-1
+    h1 = @question.title
+    = @question.body
+    = render 'layouts/attachments', object: @question
+    .actions
+      - if user_signed_in? && current_user.author_of?(@question)
+        => link_to 'Edit', '#', class: 'edit_question'
+        ' |
+        => link_to 'Delete', @question, method: :delete
+        ' |
+      - if user_signed_in?
+        = link_to 'New answer', '#', class: 'link-new-answer'

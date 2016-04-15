@@ -20,7 +20,7 @@ feature 'Delete files from question', %q{
   scenario 'Author can delete files from his question', js: true do
     visit question_path(own_question)
     click_on 'Edit'
-    check("remove-attachment-#{attachment.id}")
+    check("question_#{own_question.id}_attachment_#{attachment.id}_destroy")
     click_on 'Save'
 
     expect(page).to_not have_link 'Gemfile'

@@ -1,8 +1,8 @@
-ready = ->
-  $('.edit_answer').click (e) ->
+@bindClickEditAnswer = ->
+  $('a.edit_answer').click (e) ->
+    e.preventDefault()
+    $('form.edit_answer').hide();
     answer_id = $(this).attr('id')
     $('form#edit_answer_' + answer_id).show()
 
-$(document).ready(ready)
-$(document).on('page:load', ready)
-$(document).on('page:update', ready)
+$(document).ready(bindClickEditAnswer)

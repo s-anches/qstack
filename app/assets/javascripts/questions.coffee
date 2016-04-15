@@ -1,8 +1,39 @@
-ready = ->
-  $('.edit_question').click (e) ->
+@bindClickEditQuestion = ->
+  $('a.edit_question').click (e) ->
+    e.preventDefault()
     $('form.edit_question').show()
 
+  $('.edit_question input:submit').click (e) ->
+    $('form.edit_question').hide()
+
+@bindClickClose = ->
+  $('.link-close').click (e) ->
+    e.preventDefault()
+    console.log($(this).parent().parent())
+    $(this).parent().parent().parent().css("display", "none")
+
+@bindAddFiles = ->
+  $('.new_question, .new_answer, .edit_answer, .edit_question').on 'change', '.btn-file :file', () ->
+    input = $(this).parents('.input-group').find(':text')
+      .val $(this).val().replace(/\\/g, '/').replace(/.*\//, '')
+
+@bindPlaceFiles = ->
+  $("a.add_fields")
+    .data "association-insertion-method", 'append'
+    .data "association-insertion-node", (link) ->
+      return link.closest('.form-group').parent().find('.attachments_form')
+
+$(document).ready(bindClickEditQuestion)
+$(document).ready(bindClickClose)
+$(document).ready(bindAddFiles)
+$(document).ready(bindPlaceFiles)
+
+ready = ->
+  $('a.link-new-answer').click (e) ->
+    $('form#new_answer').show()
+
   $('.link-like').bind "ajax:success", (e, data, status, xhr) ->
+    e.preventDefault()
     data = this.dataset
     response = $.parseJSON(xhr.responseText)
     updateRating(data.object, data.id, response.rating)
@@ -16,6 +47,7 @@ ready = ->
       $("div[data-object='"+data.object+"'][data-id='"+data.id+"'] .rating").after "<div class='error'>" + value + "</div>"
 
   $('.link-dislike').bind "ajax:success", (e, data, status, xhr) ->
+    e.preventDefault()
     data = this.dataset
     response = $.parseJSON(xhr.responseText)
     updateRating(data.object, data.id, response.rating)
@@ -28,6 +60,7 @@ ready = ->
       $("div[data-object='"+data.object+"'][data-id='"+data.id+"'] .rating").after "<div class='error'>" + value + "</div>"
 
   $('.link-unvote').bind "ajax:success", (e, data, status, xhr) ->
+    e.preventDefault()
     data = this.dataset
     response = $.parseJSON(xhr.responseText)
     updateRating(data.object, data.id, response.rating)
@@ -44,4 +77,4 @@ $(document).on('page:load', ready)
 $(document).on('page:update', ready)
 
 updateRating = (object, id, rating) ->
-  $("div[data-object='"+object+"'][data-id='"+id+"'] .rating .votes-count").html "Rating: " + rating
+  $("div[data-object='"+object+"'][data-id='"+id+"'] .row .votes .row .rating .text-center").html("<h6>Rating:</h6><h3>"+rating+"</h3>")

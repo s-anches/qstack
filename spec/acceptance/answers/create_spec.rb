@@ -12,9 +12,10 @@ feature 'User answer', %q{
   scenario 'Authenticated user try to create answer', js: true do
     sign_in(user)
     visit question_path(question)
+    click_on 'New answer'
 
     fill_in 'Your answer', with: 'This is new answer'
-    click_on 'Save answer'
+    click_on 'Save'
 
     expect(current_path).to eq question_path(question)
     within '.answers' do
@@ -25,7 +26,8 @@ feature 'User answer', %q{
   scenario 'Authenticated user try to create invalid answer', js: true do
     sign_in(user)
     visit question_path(question)
-    click_on 'Save answer'
+    click_on 'New answer'
+    click_on 'Save'
 
     expect(current_path).to eq question_path(question)
     expect(page).to have_content("Body can't be blank")
@@ -34,7 +36,7 @@ feature 'User answer', %q{
   scenario 'Non-authenticated user try to create answer' do
     visit question_path(question)
 
-    expect(page).to_not have_content 'Your answer'
+    expect(page).to_not have_link 'New answer'
   end
 
 end

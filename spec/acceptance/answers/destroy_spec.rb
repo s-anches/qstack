@@ -16,7 +16,7 @@ feature 'User can delete only his answer', %q{
     scenario 'try to delete his answer', js: true do
       visit question_path(own_answer.question)
 
-      within '.answers .answer .actions' do
+      within '.answers .answer' do
         click_on 'Delete'
       end
 

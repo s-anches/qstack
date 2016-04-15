@@ -17,8 +17,10 @@ feature 'Add files to question', %q{
     fill_in 'Title', with: 'New question'
     fill_in 'Body', with: 'New body of question'
     click_on 'Add more'
-    all("input[type='file']").first.set("#{Rails.root}/config.ru")
-    all("input[type='file']").last.set("#{Rails.root}/Gemfile")
+    click_on 'Add more'
+
+    all("input[type='file']", visible: false).first.set("#{Rails.root}/config.ru")
+    all("input[type='file']", visible: false).last.set("#{Rails.root}/Gemfile")
     click_on 'Save'
 
     expect(page).to have_link 'config.ru', href: '/uploads/attachment/file/1/config.ru'

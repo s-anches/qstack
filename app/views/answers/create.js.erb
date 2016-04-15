@@ -1,8 +1,16 @@
 <% if @answer.errors.present? %>
   <%= render "layouts/error", errors: @answer.errors %>
 <% else %>
-  <% publish_to "/questions/#{@question.id}/answers" do %>
-    $('.answers').append('<%= j render @answer %>');
-  <% end %>
   $('.new_answer #answer_body').val('');
+  $('.new_answer .form-control').val('');
+  $('form.edit_answer').hide();
+  <% if remotipart_submitted? %>
+    $('.answers').prepend("<%= j "#{render @answer}" %>");
+  <% else %>
+    $('.answers').prepend('<%= j render @answer %>');
+  <% end %>
+  bindClickEditAnswer();
+  bindClickClose();
+  bindAddFiles();
+  bindPlaceFiles();
 <% end %>

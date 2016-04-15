@@ -1,38 +1,25 @@
 - if answer.persisted?
   .answer data-id = answer.id data-object='answer'
-    = answer.body
-    .rating
-      .votes-count
-        | Rating:&nbsp;
-        = answer.rating
-      - if user_signed_in? && !current_user.author_of?(answer)
-        .vote_links
+    .row
+      .col-xs-1.votes
+        .row.text-center.best
+          .status
+            - if answer.best
+              h5 Best
+        .row
           = render 'layouts/vote_links', object: answer
-    .attachments
-      p Attachments:
-      = render 'layouts/attachments', attachments: answer.attachments
-    - if user_signed_in? && current_user.author_of?(answer)
-      .actions
-        = link_to 'Edit', '#', id: answer.id, class: 'edit_answer'
-        = link_to 'Delete', answer_path(answer), method: :delete,
-          class: "delete-answer-link", remote: true
-        = form_for answer, remote: true do |f|
-          = f.label :body, "Answer"
-          = f.text_area :body
-          .attachments
-            = link_to_add_association 'Add more', f, :attachments,
-              partial: 'layouts/attachment_fields'
-            ul
-              = f.fields_for :attachments do |a|
-                - attachment = a.object
-                li
-                  = attachment.file.identifier
-                  = a.check_box :_destroy, id: "remove-attachment-#{attachment.id}"
-          = f.submit "Save"
-    - if user_signed_in? && current_user.author_of?(answer.question)
-      .actions
-        = link_to 'Set best', set_best_answer_path(answer), method: :patch, remote: true
-    - if answer.best
-      .status
-        b Best
-  hr
+      .col-xs-offset-1.col-xs-5
+        = answer.body
+        = render 'layouts/attachments', object: answer
+        - if user_signed_in?
+            ul.nav.nav-pills
+              - if current_user.author_of?(answer)
+                li => link_to 'Edit', '#', id: answer.id, class: 'edit_answer'
+                li = link_to 'Delete', answer_path(answer), method: :delete,
+                  class: "delete-answer-link", remote: true
+              - if current_user.author_of?(answer.question)
+                li =< link_to 'Set best', set_best_answer_path(answer), method: :patch, remote: true
+      .col-xs-5
+        = render 'answers/form', answer: answer
+    .row
+      hr

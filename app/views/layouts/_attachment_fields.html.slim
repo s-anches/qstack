@@ -1,3 +1,19 @@
-p
-  = f.label :file
-  = f.file_field :file
+.form-group.row.attachment
+    .col-xs-offset-2.col-xs-8
+      .input-group
+        span.input-group-btn
+          span.btn.btn-primary.btn-file
+            | Browse...
+            = f.file_field :file
+        - if f.object.persisted?
+          = f.text_field :file, class: "form-control", disabled: true,
+            value: "#{f.object.file.identifier}"
+        - else
+          = f.text_field :file, class: "form-control", disabled: true
+    - if f.object.persisted?
+      .col-xs-2.checkbox.text-right
+        = f.check_box :_destroy, id: "#{klass_name(object)}_#{object.id}_attachment_#{f.object.id}_destroy"
+    - else
+      .col-xs-2.input-group
+        = link_to_remove_association "<span class='glyphicon glyphicon-remove'></span>".html_safe,
+          f, { wrapper_class: 'attachment', class: 'btn btn-danger' }

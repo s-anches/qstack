@@ -1,5 +1,16 @@
 <% if @question.errors.present? %>
   <%= render "layouts/error", errors: @question.errors %>
 <% else %>
- $('.question').html('<%= j render @question %>');
+  <% if remotipart_submitted? %>
+    $('div.question').html("<%= j "#{render @question}" %>");
+    $('div.edit_question').html("<%= j "#{render 'form', question: @question}" %>");
+  <% else %>
+    $('div.question').html('<%= j render @question %>');
+    $('div.edit_question').html('<%= j render "form", question: @question %>');
+  <% end %>
+  bindClickEditQuestion();
+  bindAddFiles();
+  bindClickClose();
+  bindAddFiles();
+  bindPlaceFiles();
 <% end %>

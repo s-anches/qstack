@@ -1,0 +1,18 @@
+.row.new_question
+  = form_for @question, html: { class: "form-horizontal" } do |f|
+    .form-group
+      = f.label :title, class: "col-sm-2 control-label"
+      .col-sm-10
+        = f.text_field :title, class: "form-control"
+    .form-group
+      = f.label :body, class: "col-sm-2 control-label"
+      .col-sm-10
+        = f.text_area :body, class: "form-control"
+    .attachments_form
+    .form-group
+      .col-sm-offset-2.col-sm-10.add_attachment
+        = link_to_add_association 'Add more', f, :attachments,
+          partial: 'layouts/attachment_fields', class: "btn btn-default"
+    .form-group
+      .col-sm-offset-2.col-sm-10
+        = f.submit "Save", class: "btn btn-default"

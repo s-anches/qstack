@@ -1,0 +1,22 @@
+= form_for answer, remote: true, html: { class: "form-horizontal edit_answer" } do |f|
+  .row
+    .col-xs-1.col-xs-offset-11
+      = link_to '#', class: "link-close" do
+        span.glyphicon.glyphicon-remove
+  .row
+    .col-xs-12
+      .form-group
+        .col-xs-2
+          = f.label :body, "Your answer", class: "control-label"
+        .col-xs-10
+          = f.text_area :body, class: "form-control"
+      .attachments_form
+        = f.fields_for :attachments do |attachment|
+          = render 'layouts/attachment_fields', f: attachment, object: answer
+      .form-group
+        .col-sm-offset-2.col-sm-10.add_attachment
+          = link_to_add_association 'Add file', f, :attachments,
+              partial: 'layouts/attachment_fields', class: "btn btn-default"
+      .form-group
+        .col-sm-offset-2.col-sm-10
+          = f.submit "Save", class: "btn btn-default"
