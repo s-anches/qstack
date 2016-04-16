@@ -39,6 +39,6 @@ module ConcernHelpers::VotableHelper
 
     link_to direction_sign(direction), [direction, object], method: method_sign(direction),
       remote: true, class: "link-#{direction} #{classes_sign(direction)}",
-      data: { id: object.id, object: klass_name(object), confirm: confirm_sign(direction) }
+      data: { id: object.id, object: klass_name(object), confirm: confirm_sign(direction), action: direction }
   end
 end

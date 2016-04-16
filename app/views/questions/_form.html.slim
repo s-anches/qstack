@@ -20,7 +20,7 @@
           = render 'layouts/attachment_fields', f: attachment, object: @question
       .form-group
         .col-sm-offset-2.col-sm-10.add_attachment
-          = link_to_add_association 'Add more', f, :attachments,
+          = link_to_add_association 'Add file', f, :attachments,
             partial: 'layouts/attachment_fields', class: "btn btn-default"
       .form-group
         .col-sm-offset-2.col-sm-10

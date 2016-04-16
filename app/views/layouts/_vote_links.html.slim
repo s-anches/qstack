@@ -1,14 +1,11 @@
-.row.rating
-  .col-xs-12.text-center
+.row.rating.text-center
     h6 Rating:
     h3 = object.rating
-- if user_signed_in?
-  .row.buttons
-    .col-xs-12
-      .row
-        ul.nav.nav-pills.center-pills
-          li = vote_link(object, :dislike)
-          li = vote_link(object, :like)
-      .row
-        ul.nav.nav-pills.center-pills
-          li = vote_link(object, :unvote)
+- if user_signed_in? && !current_user.author_of?(object)
+  .row
+    ul.nav.nav-pills.center-pills
+      li = vote_link(object, :dislike)
+      li = vote_link(object, :like)
+  .row
+    ul.nav.nav-pills.center-pills
+      li = vote_link(object, :unvote)

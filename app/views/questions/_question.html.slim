@@ -1,16 +1,18 @@
-.row
-  .col-xs-2.votes
-    .row
-      = render 'layouts/vote_links', object: @question
-  .col-xs-9.col-xs-offset-1
-    h1 = @question.title
-    = @question.body
+.col-xs-2.votes
+  = render 'layouts/vote_links', object: @question
+.col-xs-9.col-xs-offset-1
+  .row
+    h3 = @question.title
+    p = @question.body
+  .row.attachments-list
     = render 'layouts/attachments', object: @question
-    .actions
-      - if user_signed_in? && current_user.author_of?(@question)
-        => link_to 'Edit', '#', class: 'edit_question'
-        ' |
-        => link_to 'Delete', @question, method: :delete
-        ' |
-      - if user_signed_in?
-        = link_to 'New answer', '#', class: 'link-new-answer'
+  .row.actions
+    - if user_signed_in? && current_user.author_of?(@question)
+      .row
+        ul.nav.nav-pills
+          li => link_to 'Edit', '#', class: 'edit_question'
+          li => link_to 'Delete', @question, method: :delete
+    - if user_signed_in?
+      .row
+        ul.nav.nav-pills
+          li = link_to 'New answer', '#', class: 'link-new-answer'

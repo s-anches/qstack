@@ -6,7 +6,16 @@ class AnswersController < ApplicationController
   before_action :load_answer, except: [:create]
 
   def create
-    @answer = @question.answers.create(answer_params.merge({ user: current_user }))
+    @answer = @question.answers.build(answer_params.merge({ user: current_user }))
+    respond_to do |format|
+      if @answer.save
+        format.js do
+          PrivatePub.publish_to "/questions/#{@question.id}/answers", answer: @answer.to_json, attachments: @answer.attachments.to_json, question_id: @answer.question.user_id.to_json
+        end
+      else
+        format.js
+      end
+    end
   end
 
   def destroy

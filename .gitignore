@@ -16,3 +16,4 @@ config/database.yml
 public/uploads
 public/tmp
 .DS_Store
+public/assets

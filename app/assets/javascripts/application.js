@@ -4,4 +4,6 @@
 //= require private_pub
 //= require cocoon
 //= require bootstrap-sprockets
+//= require handlebars
+//= require_tree ./templates
 //= require_tree .

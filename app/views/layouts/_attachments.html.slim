@@ -1,7 +1,6 @@
 - if object.attachments.any?
-  .attachments-list
-    h4 Attachments:
-    ul
-      - object.attachments.each do |a|
-        li id="attachment-#{a.id}"
-          => link_to a.file.identifier, a.file.url
+  h5 Attachments:
+  ul
+    - object.attachments.each do |a|
+      li id="attachment-#{a.id}"
+        => link_to a.file.identifier, a.file.url

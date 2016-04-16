@@ -1,0 +1,31 @@
+%div{class: "answer", data: {object: "answer", id: "{{answer.id}}"}}
+  .row
+    .col-xs-1.votes
+      .row.text-center.best
+        .status
+          = hb 'if answer.best' do
+            %h5 Best
+      .row.rating.text-center
+        %h6 Rating:
+        %h3 0
+      .row
+        %ul.nav.nav-pills.center-pills
+          %li
+            %a{href: "/answers/{{answer.id}}/dislike", class: "link-dislike", data: {id: "{{answer.id}}", object: "answer", action: "dislike", remote: "true", method: "patch"}} -
+          %li
+            %a{href: "/answers/{{answer.id}}/like", class: "link-like", data: {id: "{{answer.id}}", object: "answer", action: "like", remote: "true", method: "patch"}} +
+      .row
+        %ul.nav.nav-pills.center-pills
+          %li
+            %a{href: "/answers/{{answer.id}}/unvote", class: "link-unvote not-active", data: {id: "{{answer.id}}", object: "answer", action: "unvote", remote: "true", method: "delete", confirm: "Вы уверены что хотите отменить голос?"}} Unvote
+    .col-xs-offset-1.col-xs-5
+      {{answer.body}}
+      = hb 'if attachments' do
+        %h5 Attachments:
+        %ul
+          = hb 'each attachments' do
+            %li{id: "attachment-{{id}}"}
+              %a{href: "{{file.url}}"} {{file.url}}
+      %ul.nav.nav-pills.best
+  .row
+    %hr

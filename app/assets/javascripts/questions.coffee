@@ -1,6 +1,8 @@
 @bindClickEditQuestion = ->
   $('a.edit_question').click (e) ->
     e.preventDefault()
+    $('form.edit_answer').hide()
+    $('form#new_answer').hide()
     $('form.edit_question').show()
 
   $('.edit_question input:submit').click (e) ->
@@ -23,58 +25,41 @@
     .data "association-insertion-node", (link) ->
       return link.closest('.form-group').parent().find('.attachments_form')
 
-$(document).ready(bindClickEditQuestion)
-$(document).ready(bindClickClose)
-$(document).ready(bindAddFiles)
-$(document).ready(bindPlaceFiles)
-
-ready = ->
-  $('a.link-new-answer').click (e) ->
-    $('form#new_answer').show()
-
-  $('.link-like').bind "ajax:success", (e, data, status, xhr) ->
+@bindLinkVotes = ->
+  $('.link-like, .link-dislike, .link-unvote').bind "ajax:success", (e, data,status, xhr) ->
     e.preventDefault()
     data = this.dataset
     response = $.parseJSON(xhr.responseText)
     updateRating(data.object, data.id, response.rating)
-    $(this).addClass('liked not-active')
-    $(".link-dislike[data-object='"+data.object+"'][data-id='"+data.id+"']").addClass('not-active')
-    $(".link-unvote[data-object='"+data.object+"'][data-id='"+data.id+"']").removeClass('not-active')
-  .bind "ajax:error", (e, xhr, status, error) ->
-    console.log(xhr.responseText)
-    response = $.parseJSON(xhr.responseText)
-    $.each response, (index, value) ->
-      $("div[data-object='"+data.object+"'][data-id='"+data.id+"'] .rating").after "<div class='error'>" + value + "</div>"
 
-  $('.link-dislike').bind "ajax:success", (e, data, status, xhr) ->
-    e.preventDefault()
-    data = this.dataset
-    response = $.parseJSON(xhr.responseText)
-    updateRating(data.object, data.id, response.rating)
-    $(this).addClass('disliked not-active')
-    $(".link-like[data-object='"+data.object+"'][data-id='"+data.id+"']").addClass('not-active')
-    $(".link-unvote[data-object='"+data.object+"'][data-id='"+data.id+"']").removeClass('not-active')
-  .bind "ajax:error", (e, xhr, status, error) ->
-    response = $.parseJSON(xhr.responseText)
-    $.each response, (index, value) ->
-      $("div[data-object='"+data.object+"'][data-id='"+data.id+"'] .rating").after "<div class='error'>" + value + "</div>"
+    console.log(data.action)
 
-  $('.link-unvote').bind "ajax:success", (e, data, status, xhr) ->
-    e.preventDefault()
-    data = this.dataset
-    response = $.parseJSON(xhr.responseText)
-    updateRating(data.object, data.id, response.rating)
-    $(this).addClass('not-active')
-    $(".link-like[data-object='"+data.object+"'][data-id='"+data.id+"']").removeClass('liked not-active')
-    $(".link-dislike[data-object='"+data.object+"'][data-id='"+data.id+"']").removeClass('disliked not-active')
+    if data.action == 'like'
+      $(this).addClass('liked not-active')
+      $(".link-dislike[data-object='"+data.object+"'][data-id='"+data.id+"']").addClass('not-active')
+      $(".link-unvote[data-object='"+data.object+"'][data-id='"+data.id+"']").removeClass('not-active')
+
+    if data.action == 'dislike'
+      $(this).addClass('disliked not-active')
+      $(".link-like[data-object='"+data.object+"'][data-id='"+data.id+"']").addClass('not-active')
+      $(".link-unvote[data-object='"+data.object+"'][data-id='"+data.id+"']").removeClass('not-active')
+
+    if data.action == 'unvote'
+      $(this).addClass('not-active')
+      $(".link-like[data-object='"+data.object+"'][data-id='"+data.id+"']").removeClass('liked not-active')
+      $(".link-dislike[data-object='"+data.object+"'][data-id='"+data.id+"']").removeClass('disliked not-active')
+
   .bind "ajax:error", (e, xhr, status, error) ->
     response = $.parseJSON(xhr.responseText)
     $.each response, (index, value) ->
-      $("div[data-object='"+data.object+"'][data-id='"+data.id+"'] .rating").after "<div class='error'>" + value + "</div>"
-
-$(document).ready(ready)
-$(document).on('page:load', ready)
-$(document).on('page:update', ready)
+      $("#errors").append(value)
 
 updateRating = (object, id, rating) ->
-  $("div[data-object='"+object+"'][data-id='"+id+"'] .row .votes .row .rating .text-center").html("<h6>Rating:</h6><h3>"+rating+"</h3>")
+  $("div[data-object='"+object+"'][data-id='"+id+"'] .rating").html("<h6>Rating:</h6><h3>"+rating+"</h3>")
+
+$ ->
+  bindClickEditQuestion()
+  bindClickClose()
+  bindAddFiles()
+  bindPlaceFiles()
+  bindLinkVotes()

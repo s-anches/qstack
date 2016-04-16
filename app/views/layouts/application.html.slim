@@ -11,28 +11,26 @@ html
     = csrf_meta_tags
 
   body
-    .container
-      .row
-        .col-xs-10.col-xs-offset-1
-          .page-header
-            .row
-              .col-xs-4
-                ul.nav.nav-pills
-                  - if user_signed_in?
-                    li = link_to 'Sign out', destroy_user_session_path, :method => :delete
-                    li = link_to 'New question', new_question_path
-                  - else
-                    li = link_to 'Sign in', new_user_session_path
-                    li = link_to 'New user', new_user_registration_path
-              .col-xs-2
-                h4 = link_to 'QnA', root_path
-              .col-xs-4.col-xs-offset-2
+    .wrapper
+      header.container
+        .row
+          .col-xs-10.col-xs-offset-1.page-header
+            .col-xs-4
+              ul.nav.nav-pills
                 - if user_signed_in?
-                  h5 Welcome, #{current_user.email}
-          .row
-            .col-xs-6.col-xs-offset-3
-              #errors
-                - if flash.present?
-                  = flash_messages
-      .row
+                  li = link_to 'Sign out', destroy_user_session_path, :method => :delete
+                  li = link_to 'New question', new_question_path
+                - else
+                  li = link_to 'Sign in', new_user_session_path
+                  li = link_to 'New user', new_user_registration_path
+            .col-xs-2
+              h4 = link_to 'QnA', root_path
+            .col-xs-4.col-xs-offset-2
+              - if user_signed_in?
+                h5 Welcome, #{current_user.email}
+        .row
+          .col-xs-6.col-xs-offset-3#errors
+            - if flash.present?
+              = flash_messages
+      .container
         = yield
