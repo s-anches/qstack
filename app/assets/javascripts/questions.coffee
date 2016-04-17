@@ -63,3 +63,6 @@ $ ->
   bindAddFiles()
   bindPlaceFiles()
   bindLinkVotes()
+  PrivatePub.subscribe '/questions', (data, channel) ->
+    question = $.parseJSON(data['question'])
+    $('.questions').prepend(HandlebarsTemplates['questions/create'](question: question))

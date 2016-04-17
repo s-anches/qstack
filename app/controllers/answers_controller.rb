@@ -10,7 +10,9 @@ class AnswersController < ApplicationController
     respond_to do |format|
       if @answer.save
         format.js do
-          PrivatePub.publish_to "/questions/#{@question.id}/answers", answer: @answer.to_json, attachments: @answer.attachments.to_json, question_id: @answer.question.user_id.to_json
+          PrivatePub.publish_to "/questions/#{@question.id}/answers",
+            answer: @answer.to_json, attachments: @answer.attachments.to_json,
+            question_id: @answer.question.user_id.to_json
         end
       else
         format.js

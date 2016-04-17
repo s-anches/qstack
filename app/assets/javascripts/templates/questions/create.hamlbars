@@ -1,0 +1,4 @@
+%div{class: "row", data: { id: "{{question.id}}", object: "question" }}
+  %h5
+    %a{href: "/questions/{{question.id}}"} {{question.title}}
+  {{question.body}}
