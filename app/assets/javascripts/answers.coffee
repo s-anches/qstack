@@ -21,6 +21,7 @@ $ ->
       bindAddFiles()
       bindPlaceFiles()
       bindLinkVotes()
+      bindAnswerComments()
     if gon.user_id == question_id
       $('div[data-id="'+answer.id+'"][data-object="answer"] .best').html("<a href='/answers/"+answer.id+"/set_best' data-method='patch' data-remote='true'>Set best</a>")
 

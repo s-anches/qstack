@@ -31,3 +31,5 @@
             = render partial: 'comments/form', locals: { commentable: answer, comment: answer.comments.build }
     .row
       hr
+
+= subscribe_to "/answers/#{answer.id}/comments"

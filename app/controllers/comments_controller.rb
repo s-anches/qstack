@@ -8,7 +8,7 @@ class CommentsController < ApplicationController
     respond_to do |format|
       if @comment.save
         format.js do
-          PrivatePub.publish_to "/#{@commentable}/#{@commentable.id}/comments",
+          PrivatePub.publish_to "/#{@comment.commentable_type.pluralize.downcase}/#{@comment.commentable_id}/comments",
             comment: @comment.to_json
         end
       else
