@@ -9,13 +9,21 @@ Rails.application.routes.draw do
       delete 'unvote'
     end
   end
+  
+  concern :commentable do
+    resources :comments, only: [:create, :destroy]
+  end
 
-  resources :questions, concerns: :votable do
-    resources :answers, concerns: :votable, shallow: true do
+  resources :questions, concerns: [:votable, :commentable], shallow: true do
+    resources :answers, concerns: [:votable, :commentable] do
       member do
         patch 'set_best'
       end
     end
+  end
+
+  resources :answers, only: [] do
+      resources :comments, only: [:create, :destroy]
   end
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

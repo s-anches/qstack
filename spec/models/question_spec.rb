@@ -11,4 +11,5 @@ RSpec.describe Question, type: :model do
 
   it_behaves_like 'votable'
   it_behaves_like 'attachable'
+  it_behaves_like 'commentable'
 end
