@@ -1,14 +1,23 @@
 .row
   .col-xs-11.col-xs-offset-1
-    .col-xs-7.question data-id=@question.id data-object='question'
-      = render @question
-    .col-xs-5.new-forms
-      - if user_signed_in?
-        .new_answer
-          = render partial: 'answers/form', locals: { answer: [@question, @answer] }
-      - if user_signed_in? && current_user.author_of?(@question)
-        .edit_question
-          = render partial: 'form', locals: { question: @question }
+    .row
+      .col-xs-7.question data-id=@question.id data-object='question'
+        = render @question
+      .col-xs-5.new-forms
+        - if user_signed_in?
+          .new_answer
+            = render partial: 'answers/form', locals: { answer: [@question, @answer] }
+        - if user_signed_in? && current_user.author_of?(@question)
+          .edit_question
+            = render partial: 'form', locals: { question: @question }
+    .row
+      .col-xs-7.col-xs-offset-5
+        .row.comments
+          = render @question.comments
+        .row
+          - if user_signed_in?
+            = link_to 'Add comment', '#', class: 'link-new-comment'
+            = render partial: 'comments/form', locals: { commentable: @question, comment: @question.comments.build }
 .row
   hr
 .row

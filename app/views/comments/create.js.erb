@@ -1,0 +1,7 @@
+<% if @comment.errors.present? %>
+  <%= render "layouts/error", errors: @comment.errors %>
+<% else %>
+  $('.new_comment #comment_body').val('');
+  $('form#new_comment').hide();
+  $('.comments').append('<%= j render @comment %>');
+<% end %>
