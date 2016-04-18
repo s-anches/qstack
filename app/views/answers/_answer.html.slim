@@ -22,4 +22,12 @@
       .col-xs-5
         = render 'answers/form', answer: answer
     .row
+      .col-xs-7.col-xs-offset-5
+        .row.comments
+          = render answer.comments
+        .row
+          - if user_signed_in?
+            = link_to 'Add comment', '#', class: 'link-new-comment'
+            = render partial: 'comments/form', locals: { commentable: answer, comment: answer.comments.build }
+    .row
       hr

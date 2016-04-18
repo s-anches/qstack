@@ -16,8 +16,8 @@ feature 'Add files to question', %q{
   scenario 'User adds files when ask question', js: true do
     fill_in 'Title', with: 'New question'
     fill_in 'Body', with: 'New body of question'
-    click_on 'Add more'
-    click_on 'Add more'
+    click_on 'Add file'
+    click_on 'Add file'
 
     all("input[type='file']", visible: false).first.set("#{Rails.root}/config.ru")
     all("input[type='file']", visible: false).last.set("#{Rails.root}/Gemfile")

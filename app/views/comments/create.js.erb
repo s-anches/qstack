@@ -3,5 +3,5 @@
 <% else %>
   $('.new_comment #comment_body').val('');
   $('form#new_comment').hide();
-  $('.comments').append('<%= j render @comment %>');
+  $('div[data-id="<%= @comment.commentable_id %>"][data-object="<%= @comment.commentable_type.downcase %>"] .comments').append('<%= j render @comment %>');
 <% end %>

@@ -10,6 +10,7 @@ RSpec.describe Answer, type: :model do
 
   it_behaves_like 'votable'
   it_behaves_like 'attachable'
+  it_behaves_like 'commentable'
 
   let(:user) { create(:user) }
   let(:question) { create(:question) }
