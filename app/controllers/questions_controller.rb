@@ -3,45 +3,37 @@ class QuestionsController < ApplicationController
 
   before_action :authenticate_user!, except: [:index, :show]
   before_action :load_question, only: [:show, :destroy, :update]
+  before_action :verify_author, only: [:destroy, :update]
+
+  respond_to :js
 
   def index
-    @questions = Question.all
+    respond_with(@questions = Question.all)
   end
 
   def show
-    @answer = @question.answers.build
-    @answer.attachments.build
-    @answers = @question.answers.all
+    respond_with(@question)
   end
 
   def new
-    @question = Question.new
-    @question.attachments.build
+    respond_with(@question = Question.new)
   end
 
   def create
-    @question = current_user.questions.new(question_params)
+    respond_with(@question = current_user.questions.create(question_params))
 
-    if @question.save
+    if @question.errors.empty?
       PrivatePub.publish_to "/questions", question: @question.to_json
-      redirect_to @question
-    else
-      flash[:error] = "INVALID ATTRIBUTES"
-      render :new
-    end
-  end
-
-  def destroy
-    if current_user.author_of?(@question)
-      @question.destroy
-      redirect_to questions_path, notice: "Question successfuly deleted."
-    else
-      redirect_to @question, error: "You can not delete not his question."
     end
   end
 
   def update
-    @question.update(question_params) if current_user.author_of?(@question)
+    @question.update(question_params)
+    respond_with(@question)
+  end
+
+  def destroy
+    respond_with(@question.destroy)
   end
 
   private
@@ -51,5 +43,11 @@ class QuestionsController < ApplicationController
 
     def question_params
       params.require(:question).permit(:title, :body, attachments_attributes: [:id, :file, :_destroy])
+    end
+
+    def verify_author
+      unless current_user.author_of?(@question)
+        redirect_to @question
+      end
     end
 end

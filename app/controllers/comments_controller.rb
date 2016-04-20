@@ -2,19 +2,13 @@ class CommentsController < ApplicationController
   before_action :authenticate_user!
   before_action :load_commentable, only: [:create]
   before_action :load_comment, only: [:destroy]
+  after_action :publish_to, only: :create
+
+  respond_to :json
 
   def create
-    @comment = @commentable.comments.build(comment_params.merge({ user: current_user }))
-    respond_to do |format|
-      if @comment.save
-        format.js do
-          PrivatePub.publish_to "/#{@comment.commentable_type.pluralize.downcase}/#{@comment.commentable_id}/comments",
-            comment: @comment.to_json
-        end
-      else
-        format.js
-      end
-    end
+    @comment = @commentable.comments.create(comment_params.merge({ user: current_user }))
+    respond_with(@comment)
   end
 
   def destroy
@@ -37,11 +31,19 @@ class CommentsController < ApplicationController
       @commentable = klass.find(params[commentable_id])
     end
 
-    def comment_params
-      params.require(:comment).permit(:body)
-    end
-
     def load_comment
       @comment = Comment.find(params[:id])
+    end
+
+    def publish_to
+      PrivatePub.publish_to(channel, comment: @comment.to_json) if @comment.errors.empty?
+    end
+
+    def channel
+      "/questions/#{@commentable.try(:question).try(:id) || @commentable.id}/comments"
+    end
+
+    def comment_params
+      params.require(:comment).permit(:body)
     end
 end

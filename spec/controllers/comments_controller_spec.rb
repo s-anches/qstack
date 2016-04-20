@@ -3,12 +3,23 @@ require 'rails_helper'
 RSpec.describe CommentsController, type: :controller do
   let(:user) { create(:user) }
   let(:question) { create(:question) }
+  let(:answer) { create(:answer) }
   let!(:own_comment) { create(:comment, user: user) }
   let!(:foreign_comment) { create(:comment) }
 
   before { sign_in(user) }
 
   describe "POST #create" do
+    it 'loads question if parent object is question' do
+      post :create, question_id: question, comment: attributes_for(:comment), format: :js
+      expect(assigns(:commentable)).to eq question
+    end
+
+    it 'loads answer if parent object is answer' do
+      post :create, answer_id: answer, comment: attributes_for(:comment), format: :js
+      expect(assigns(:commentable)).to eq answer
+    end
+
     context 'with valid attributes' do
       it "save new comment in the database" do
         expect { post :create, question_id: question.id, comment: attributes_for(:comment), format: :js }

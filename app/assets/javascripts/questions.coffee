@@ -66,3 +66,11 @@ $ ->
   PrivatePub.subscribe '/questions', (data, channel) ->
     question = $.parseJSON(data['question'])
     $('.questions').prepend(HandlebarsTemplates['questions/create'](question: question))
+
+# $.ajax
+#   url: "/questions"
+#   dataType: "html"
+#   error: (jqXHR, textStatus, errorThrown) ->
+#     $('body').append "AJAX Error: #{textStatus}"
+#   success: (data, textStatus, jqXHR) ->
+#     $('body').append "Successful AJAX call: #{data}"
