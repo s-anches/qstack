@@ -21,6 +21,8 @@ gem 'thin'
 gem 'gon'
 gem 'handlebars_assets'
 gem 'hamlbars'
+gem 'responders'
+gem 'active_model_serializers'
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 # Use Unicorn as the app server

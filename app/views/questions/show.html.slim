@@ -6,7 +6,7 @@
       .col-xs-5.new-forms
         - if user_signed_in?
           .new_answer
-            = render partial: 'answers/form', locals: { answer: [@question, @answer] }
+            = render partial: 'answers/form', locals: { answer: [@question, @question.answers.build] }
         - if user_signed_in? && current_user.author_of?(@question)
           .edit_question
             = render partial: 'form', locals: { question: @question }

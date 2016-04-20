@@ -9,7 +9,7 @@ Rails.application.routes.draw do
       delete 'unvote'
     end
   end
-  
+
   concern :commentable do
     resources :comments, only: [:create, :destroy]
   end
