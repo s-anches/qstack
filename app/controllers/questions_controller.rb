@@ -2,10 +2,11 @@ class QuestionsController < ApplicationController
   include Voted
 
   before_action :authenticate_user!, except: [:index, :show]
-  before_action :load_question, only: [:show, :destroy, :update]
-  before_action :verify_author, only: [:destroy, :update]
+  before_action :load_question, only: [:show, :update, :destroy]
+  before_action :verify_author, only: [:update, :destroy]
+  after_action :publish_to, only: [:create, :update, :destroy]
 
-  respond_to :js
+  respond_to :js, only: :update
 
   def index
     respond_with(@questions = Question.all)
@@ -21,10 +22,6 @@ class QuestionsController < ApplicationController
 
   def create
     respond_with(@question = current_user.questions.create(question_params))
-
-    if @question.errors.empty?
-      PrivatePub.publish_to "/questions", question: @question.to_json
-    end
   end
 
   def update
@@ -41,13 +38,21 @@ class QuestionsController < ApplicationController
       @question = Question.find(params[:id])
     end
 
-    def question_params
-      params.require(:question).permit(:title, :body, attachments_attributes: [:id, :file, :_destroy])
-    end
-
     def verify_author
       unless current_user.author_of?(@question)
         redirect_to @question
       end
+    end
+
+    def publish_to
+      PrivatePub.publish_to(
+        "/questions", question: @question.to_json, action: self.action_name
+      ) if @question.errors.empty?
+    end
+
+    def question_params
+      params.require(:question).permit(
+        :title, :body, attachments_attributes: [:id, :file, :_destroy]
+      )
     end
 end

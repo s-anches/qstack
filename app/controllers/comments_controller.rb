@@ -2,9 +2,9 @@ class CommentsController < ApplicationController
   before_action :authenticate_user!
   before_action :load_commentable, only: [:create]
   before_action :load_comment, only: [:destroy]
-  after_action :publish_to, only: :create
+  after_action :publish_to
 
-  respond_to :json
+  respond_to :js
 
   def create
     @comment = @commentable.comments.create(comment_params.merge({ user: current_user }))
@@ -13,20 +13,11 @@ class CommentsController < ApplicationController
 
   def destroy
     @comment.destroy if current_user.author_of?(@comment)
-    # respond_to do |format|
-    #   format.js do
-    #     commentable_type = @comment.commentable_type.pluralize.downcase
-    #     commentable_id = @comment.commentable_id
-    #     @comment.destroy if current_user.author_of?(@comment)
-    #     PrivatePub.publish_to "/#{commentable_type}/#{commentable_id}/comments",
-    #       comment: @comment.to_json
-    #   end
-    # end
   end
 
   private
     def load_commentable
-      commentable_id = params.keys.detect { |k| k.to_s =~ /(question|answer)_id/ } 
+      commentable_id = params.keys.detect { |k| k.to_s =~ /(question|answer)_id/ }
       klass = $1.classify.constantize
       @commentable = klass.find(params[commentable_id])
     end
@@ -36,7 +27,9 @@ class CommentsController < ApplicationController
     end
 
     def publish_to
-      PrivatePub.publish_to(channel, comment: @comment.to_json) if @comment.errors.empty?
+      PrivatePub.publish_to(
+        channel, comment: @comment.to_json, action: self.action_name
+      ) if @comment.errors.empty?
     end
 
     def channel

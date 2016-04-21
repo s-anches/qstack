@@ -11,11 +11,11 @@
 @bindClickClose = ->
   $('.link-close').click (e) ->
     e.preventDefault()
-    console.log($(this).parent().parent())
     $(this).parent().parent().parent().css("display", "none")
 
 @bindAddFiles = ->
-  $('.new_question, .new_answer, .edit_answer, .edit_question').on 'change', '.btn-file :file', () ->
+  $('.new_question, .new_answer, .edit_answer, .edit_question')
+  .on 'change', '.btn-file :file', () ->
     input = $(this).parents('.input-group').find(':text')
       .val $(this).val().replace(/\\/g, '/').replace(/.*\//, '')
 
@@ -31,8 +31,6 @@
     data = this.dataset
     response = $.parseJSON(xhr.responseText)
     updateRating(data.object, data.id, response.rating)
-
-    console.log(data.action)
 
     if data.action == 'like'
       $(this).addClass('liked not-active')
@@ -54,8 +52,8 @@
     $.each response, (index, value) ->
       $("#errors").append(value)
 
-updateRating = (object, id, rating) ->
-  $("div[data-object='"+object+"'][data-id='"+id+"'] .rating").html("<h6>Rating:</h6><h3>"+rating+"</h3>")
+@updateRating = (object, id, rating) ->
+  $('div#'+object+'-'+id+' .rating').html("<h6>Rating:</h6><h3>"+rating+"</h3>")
 
 $ ->
   bindClickEditQuestion()
@@ -63,14 +61,14 @@ $ ->
   bindAddFiles()
   bindPlaceFiles()
   bindLinkVotes()
-  PrivatePub.subscribe '/questions', (data, channel) ->
-    question = $.parseJSON(data['question'])
-    $('.questions').prepend(HandlebarsTemplates['questions/create'](question: question))
 
-# $.ajax
-#   url: "/questions"
-#   dataType: "html"
-#   error: (jqXHR, textStatus, errorThrown) ->
-#     $('body').append "AJAX Error: #{textStatus}"
-#   success: (data, textStatus, jqXHR) ->
-#     $('body').append "Successful AJAX call: #{data}"
+  PrivatePub.subscribe '/questions', (data, channel) ->
+    action = data['action']
+    question = $.parseJSON(data['question'])
+    if action == 'create'
+      $('.questions').prepend(HandlebarsTemplates['questions/create'](question: question))
+    if action == 'update'
+      $('div#question-'+question.id).remove()
+      $('.questions').prepend(HandlebarsTemplates['questions/create'](question: question))
+    if action == 'destroy'
+      $('div#question-'+question.id).remove()

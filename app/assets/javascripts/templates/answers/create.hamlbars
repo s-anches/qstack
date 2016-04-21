@@ -1,4 +1,4 @@
-%div{class: "answer", data: {object: "answer", id: "{{answer.id}}"}}
+%div{id: "answer-{{answer.id}}", class: "answer", data: {object: "answer", id: "{{answer.id}}"}}
   .row
     .col-xs-1.votes
       .row.text-center.best
@@ -26,6 +26,9 @@
           = hb 'each attachments' do
             %li{id: "attachment-{{id}}"}
               %a{href: "{{file.url}}"} {{file.url}}
-      %ul.nav.nav-pills.best
+      %ul.nav.nav-pills
+        = hb 'if authorOfQuestion' do
+          %li
+            %a{href: "answers/{{answer.id/set_best}}", data: { method: "patch", remote: "true" }} Set best
   .row
     %hr

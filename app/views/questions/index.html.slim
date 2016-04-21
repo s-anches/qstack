@@ -1,6 +1,6 @@
 .questions
   - @questions.each do |question|
-    div.row data-id="#{question.id}" data-object="question"
+    div.row id="question-#{question.id}" data-id="#{question.id}" data-object="question"
       h5 = link_to question.title, question
       = question.body
 

@@ -1,13 +1,12 @@
 - if answer.persisted?
-  .answer data-id = answer.id data-object='answer'
+  .answer id = "answer-#{answer.id}"
     .row
       .col-xs-1.votes
         .row.text-center.best
           .status
             - if answer.best
               h5 Best
-        .row
-          = render 'layouts/vote_links', object: answer
+        = render 'layouts/vote_links', object: answer
       .col-xs-offset-1.col-xs-5
         = answer.body
         = render 'layouts/attachments', object: answer

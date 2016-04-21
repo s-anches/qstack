@@ -10,6 +10,11 @@
     $('div.edit_question').html('<%= j render "form", question: @question %>');
     $('div.question .comments').html('<%= j render @question.comments %>');
   <% end %>
+  <% publish_to "/questions/#{@question.id}" do %>
+    if (<%= @question.user_id %> != gon.user_id) {
+      $('div.question .question').html("<%= j render @question %>");
+    }
+  <% end %>
   bindClickEditQuestion();
   bindAddFiles();
   bindClickClose();
