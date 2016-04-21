@@ -28,7 +28,7 @@ feature 'Create new question', %q{
     click_on 'New question'
     click_on 'Save'
 
-    expect(page).to have_content 'INVALID ATTRIBUTES'
+    expect(page).to have_content 'Question could not be created'
   end
 
   scenario 'Non-authenticated user try to create question' do

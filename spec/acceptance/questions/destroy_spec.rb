@@ -15,7 +15,7 @@ feature 'User can delete only his question', %q{
     visit question_path(question)
     click_on 'Delete'
 
-    expect(page).to have_content 'Question successfuly deleted.'
+    expect(page).to have_content 'Question was successfully destroyed.'
     expect(page).to_not have_content question.title
     expect(current_path).to eq questions_path
   end

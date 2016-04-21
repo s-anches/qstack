@@ -52,3 +52,6 @@ $ ->
         $('div#answer-'+answer.id).remove()
       if action == 'like' || action == 'dislike' || action == 'unvote'
         updateRating('answer', answer.id, rating)
+    if action == 'set_best'
+      $('.answer .status').remove();
+      $('div#answer-'+answer.id+' .best').append('<div class="status"><h5>Best</h5></div>');

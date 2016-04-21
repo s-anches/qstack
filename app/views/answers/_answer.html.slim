@@ -17,7 +17,7 @@
                 li = link_to 'Delete', answer_path(answer), method: :delete,
                   class: "delete-answer-link", remote: true
               - if current_user.author_of?(answer.question)
-                li =< link_to 'Set best', set_best_answer_path(answer), method: :patch, remote: true
+                li =< link_to 'Set best', set_best_answer_path(answer), method: :patch, remote: true, data: { type: :json }
       .col-xs-5
         = render 'answers/form', answer: answer
     .row

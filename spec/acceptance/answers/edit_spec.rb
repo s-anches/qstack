@@ -16,7 +16,7 @@ feature 'Answer editing', %q{
     scenario 'try to edit his answer', js: true do
       visit question_path(own_answer.question)
 
-      within "div[data-id='#{own_answer.id}'][data-object='answer']" do
+      within "div#answer-#{own_answer.id}" do
         click_on 'Edit'
       end
       fill_in 'answer_body', with: 'new answer body'

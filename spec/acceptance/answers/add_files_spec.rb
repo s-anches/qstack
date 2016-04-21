@@ -18,9 +18,11 @@ feature 'Add files to answer', %q{
   scenario 'User adds files when write answers', js: true do
     fill_in 'Your answer', with: 'This is new answer'
     click_on 'Add file'
+    click_on 'Add file'
 
     all("input[type='file']", visible: false).first.set("#{Rails.root}/config.ru")
     all("input[type='file']", visible: false).last.set("#{Rails.root}/Gemfile")
+
     click_on 'Save'
 
     within '.answers' do

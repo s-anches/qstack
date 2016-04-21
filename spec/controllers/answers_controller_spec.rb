@@ -53,11 +53,6 @@ RSpec.describe AnswersController, type: :controller do
       it 'do not delete other owner answer' do
         expect { delete :destroy, id: foreign_answer, format: :js }.to_not change(Answer, :count)
       end
-
-      it 'render destroy template' do
-        delete :destroy, id: foreign_answer, format: :js
-        expect(response).to render_template :destroy
-      end
     end
   end
 
@@ -102,19 +97,14 @@ RSpec.describe AnswersController, type: :controller do
       before { sign_in(user) }
 
       it 'set best answer flag on own question' do
-        patch :set_best, id: foreign_answer, format: :js
+        patch :set_best, id: foreign_answer, format: :json
         foreign_answer.reload
         expect(foreign_answer.best).to eq true
       end
 
-      it 'render set_best template' do
-        patch :set_best, id: foreign_answer, format: :js
-        expect(response).to render_template :set_best
-      end
-
       it 'change best answer on own question' do
         expect(foreign_answer_two.best).to eq true
-        patch :set_best, id: foreign_answer, format: :js
+        patch :set_best, id: foreign_answer, format: :json
         foreign_answer.reload
         foreign_answer_two.reload
         expect(foreign_answer_two.best).to eq false
@@ -122,7 +112,7 @@ RSpec.describe AnswersController, type: :controller do
       end
 
       it 'do not set best answer flag on foreign question' do
-        patch :set_best, id: answer, format: :js
+        patch :set_best, id: answer, format: :json
         answer.reload
         expect(answer.best).to eq false
       end
@@ -130,7 +120,7 @@ RSpec.describe AnswersController, type: :controller do
 
     context 'Non-authenticated user' do
       it 'do not set best answer flag on any question' do
-        patch :set_best, id: own_answer, format: :js
+        patch :set_best, id: own_answer, format: :json
         own_answer.reload
         expect(own_answer.best).to eq false
       end

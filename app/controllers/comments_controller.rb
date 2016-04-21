@@ -2,7 +2,8 @@ class CommentsController < ApplicationController
   before_action :authenticate_user!
   before_action :load_commentable, only: [:create]
   before_action :load_comment, only: [:destroy]
-  after_action :publish_to
+  before_action :verify_author, only: [:update, :destroy]
+  after_action :publish_to, only: :create
 
   respond_to :js
 
@@ -12,7 +13,7 @@ class CommentsController < ApplicationController
   end
 
   def destroy
-    @comment.destroy if current_user.author_of?(@comment)
+    respond_with(@comment.destroy)
   end
 
   private
@@ -24,6 +25,12 @@ class CommentsController < ApplicationController
 
     def load_comment
       @comment = Comment.find(params[:id])
+    end
+
+    def verify_author
+      unless current_user.author_of?(@comment)
+        redirect_to root_path
+      end
     end
 
     def publish_to
