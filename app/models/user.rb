@@ -7,7 +7,7 @@ class User < ActiveRecord::Base
 
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable,
-         :omniauthable,  omniauth_providers: [:facebook, :twitter]
+         :omniauthable,  omniauth_providers: [:facebook, :twitter, :vkontakte]
 
   def author_of?(object)
     id == object.user_id

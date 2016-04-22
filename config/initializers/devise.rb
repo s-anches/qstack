@@ -241,8 +241,7 @@ Devise.setup do |config|
   config.omniauth :facebook,
     Rails.application.secrets.facebook_app_id,
     Rails.application.secrets.facebook_app_secret,
-    # info_fields: 'id, email'
-    scope: [:email]
+    scope: :email
 
   config.omniauth :twitter,
     Rails.application.secrets.twitter_app_id,
@@ -254,6 +253,13 @@ Devise.setup do |config|
         :force_login => 'true',
         :lang => 'ru'
       }
+    }
+
+  config.omniauth :vkontakte,
+    Rails.application.secrets.vkontakte_app_id,
+    Rails.application.secrets.vkontakte_app_secret,
+    {
+      scope: [:email, :friends, :photos, :audio]
     }
 
   # ==> Warden configuration
