@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
-  devise_for :users
-  
+  devise_for :users, controllers: { omniauth_callbacks: 'users/omniauth_callbacks' }
+
   root 'questions#index'
 
   concern :votable do
@@ -10,7 +10,7 @@ Rails.application.routes.draw do
       delete 'unvote'
     end
   end
-  
+
   concern :commentable do
     resources :comments, only: [:create, :destroy]
   end
