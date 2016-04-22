@@ -25,6 +25,7 @@ gem "responders"
 gem 'active_model_serializers'
 gem 'omniauth'
 gem 'omniauth-facebook'
+gem 'omniauth-twitter'
 gem 'omniauth-vkontakte'
 
 # Use ActiveModel has_secure_password

@@ -243,6 +243,17 @@ Devise.setup do |config|
     Rails.application.secrets.facebook_app_secret,
     # info_fields: 'id, email'
     scope: [:email]
+  config.omniauth :twitter,
+    Rails.application.secrets.twitter_app_id,
+    Rails.application.secrets.twitter_app_secret,
+    {
+      :secure_image_url => 'true',
+      :image_size => 'original',
+      :authorize_params => {
+        :force_login => 'true',
+        :lang => 'ru'
+      }
+    }
 
   # ==> Warden configuration
   # If you want to use other strategies, that are not supported by Devise, or
