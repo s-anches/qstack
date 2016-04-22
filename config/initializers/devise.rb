@@ -243,6 +243,7 @@ Devise.setup do |config|
     Rails.application.secrets.facebook_app_secret,
     # info_fields: 'id, email'
     scope: [:email]
+
   config.omniauth :twitter,
     Rails.application.secrets.twitter_app_id,
     Rails.application.secrets.twitter_app_secret,
