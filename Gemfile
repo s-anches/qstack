@@ -35,19 +35,21 @@ gem 'omniauth-vkontakte'
 
 group :development, :test do
   gem 'byebug'
-  gem 'rspec-rails'
-  gem 'factory_girl_rails'
-  gem 'capybara-screenshot'
-  gem 'database_cleaner'
-  gem 'poltergeist'
-  gem 'phantomjs', require: 'phantomjs/poltergeist'
-  gem 'json_spec'
 end
 
 group :test do
   gem 'shoulda-matchers'
   gem 'capybara'
   gem 'launchy'
+  gem 'capybara-email'
+  gem 'capybara-screenshot'
+  gem 'database_cleaner'
+  gem 'rspec-rails'
+  gem 'factory_girl_rails'
+  gem 'poltergeist'
+  gem 'phantomjs', require: 'phantomjs/poltergeist'
+  gem 'json_spec'
+  gem "letter_opener"
 end
 
 group :development do
