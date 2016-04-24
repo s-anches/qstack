@@ -12,7 +12,7 @@ Devise.setup do |config|
   # Configure the e-mail address which will be shown in Devise::Mailer,
   # note that it will be overwritten if you use your own mailer class
   # with default "from" parameter.
-  config.mailer_sender = 'please-change-me-at-config-initializers-devise@example.com'
+  config.mailer_sender = 'maks.portnyagin@gmail.com'
 
   # Configure the class responsible to send e-mails.
   # config.mailer = 'Devise::Mailer'
@@ -239,13 +239,13 @@ Devise.setup do |config|
   # Add a new OmniAuth provider. Check the wiki for more information on setting
   # up on your models and hooks.
   config.omniauth :facebook,
-    Rails.application.secrets.facebook_app_id,
-    Rails.application.secrets.facebook_app_secret,
+    '1609638366025091', 
+    'e063e5dc805dd59fb08b3e51ae6ab2f4',
     scope: :email
 
   config.omniauth :twitter,
-    Rails.application.secrets.twitter_app_id,
-    Rails.application.secrets.twitter_app_secret,
+    '40Rkih7izxlOtr1QgWhNGzkt3',
+    'NVtjKCNL7i4DDXSyW2ZPSpebuAApnhVWvbxdoiiE9Sp39yl3Ox',
     {
       :secure_image_url => 'true',
       :image_size => 'original',
@@ -256,8 +256,8 @@ Devise.setup do |config|
     }
 
   config.omniauth :vkontakte,
-    Rails.application.secrets.vkontakte_app_id,
-    Rails.application.secrets.vkontakte_app_secret,
+    '5428789',
+    'kz7T7wtCvyu7IkvMonER',
     {
       scope: [:email, :friends, :photos, :audio]
     }

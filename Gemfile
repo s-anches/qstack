@@ -35,6 +35,7 @@ gem 'omniauth-vkontakte'
 
 group :development, :test do
   gem 'byebug'
+  gem 'dotenv-rails'
 end
 
 group :test do

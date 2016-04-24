@@ -13,5 +13,18 @@ module OmniauthMacros
         'secret' => 'mock_secret'
       }
     })
+
+    OmniAuth.config.mock_auth[:twitter] = OmniAuth::AuthHash.new({
+      'provider' => 'facebook',
+      'uid' => '123545',
+      'info' => {
+        'name' => 'mockuser',
+        'image' => 'http://graph.facebook.com/123545/picture'
+      },
+      'credentials' => {
+        'token' => 'mock_token',
+        'secret' => 'mock_secret'
+      }
+    })
   end
 end

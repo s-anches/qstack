@@ -13,8 +13,10 @@
 /tmp
 
 config/database.yml
+config/config.yml
 config/secrets.yml
 public/uploads
 public/tmp
 .DS_Store
 public/assets
+.env

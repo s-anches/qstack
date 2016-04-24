@@ -1,13 +1,18 @@
 class User < ActiveRecord::Base
+  TEMP_EMAIL_PREFIX = 'oauth@provided'
+  TEMP_EMAIL_REGEX = /\Aoauth@provided/
+
   has_many :questions, dependent: :destroy
   has_many :answers, dependent: :destroy
   has_many :votes, dependent: :destroy
   has_many :comments, dependent: :destroy
-  has_many :authorizations
+  has_many :authorizations, dependent: :destroy
 
-  devise :database_authenticatable, :registerable,
+  devise :database_authenticatable, :registerable, :confirmable,
          :recoverable, :rememberable, :trackable, :validatable,
          :omniauthable,  omniauth_providers: [:facebook, :twitter, :vkontakte]
+
+  validates_format_of :email, :without => TEMP_EMAIL_REGEX, on: :update
 
   def author_of?(object)
     id == object.user_id
@@ -21,23 +26,35 @@ class User < ActiveRecord::Base
     votes.exists?(votable: object)
   end
 
-  def self.find_for_oauth(auth)
-    authorization = Authorization.where(provider: auth.provider, uid: auth.uid.to_s).first
-    return authorization.user if authorization
+  def self.find_for_oauth(auth, signed_in_resource = nil)
 
-    email = auth.info[:email]
-    user = User.where(email: email).first
-    if user
-      user.create_authorization(auth) if user
-    else
-      password = Devise.friendly_token[0, 16]
-      user = User.create!(email: email, password: password, password_confirmation: password)
-      user.create_authorization(auth) if user
+    authorization = Authorization.find_for_oauth(auth)
+
+    user = signed_in_resource ? signed_in_resource : authorization.user
+
+    if user.nil?
+      email = auth.info.email
+      user = User.where(email: email).first if email
+
+      if user.nil?
+        user = User.new(
+          email: email ? email : "#{TEMP_EMAIL_PREFIX}-#{auth.uid}.#{auth.provider}",
+          password: Devise.friendly_token[0,16]
+        )
+        user.skip_confirmation!
+        user.save!
+      end
+    end
+
+    if authorization.user != user
+      authorization.user = user
+      authorization.save!
     end
     user
   end
 
-  def create_authorization(auth)
-    authorizations.create(provider: auth.provider, uid: auth.uid)
+  def email_verified?
+    self.email && self.email !~ TEMP_EMAIL_REGEX
   end
+
 end
