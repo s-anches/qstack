@@ -11,3 +11,4 @@ module AcceptanceHelpers
     click_on 'Sign out'
   end
 end
+

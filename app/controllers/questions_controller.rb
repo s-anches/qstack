@@ -1,5 +1,4 @@
 class QuestionsController < ApplicationController
-  include Authorized
   include Voted
 
   before_action :authenticate_user!, except: [:index, :show]

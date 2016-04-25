@@ -1,6 +1,5 @@
 class CommentsController < ApplicationController
-  include Authorized
-  
+
   before_action :authenticate_user!
   before_action :load_commentable, only: [:create]
   before_action :load_comment, only: [:destroy]

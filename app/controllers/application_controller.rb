@@ -6,6 +6,7 @@ class ApplicationController < ActionController::Base
 
   protect_from_forgery with: :exception
 
+  before_filter :ensure_signup_complete, only: [:new, :create, :update, :destroy]
   before_action :gonify_user_id
 
   def ensure_signup_complete
