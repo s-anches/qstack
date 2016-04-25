@@ -8,18 +8,8 @@ class UsersController < ApplicationController
   def finish_signup
     if request.patch? && params[:user] && params[:user][:email]
       if User.where(email: params[:user][:email]).first
-        user = User.where(email: params[:user][:email]).first
-        authorization = Authorization.where(user: @user).first
-        authorization.user = user
-        authorization.save!
-
-        user.unconfirmed_email = params[:user][:email]
-        user.save!
-        user.send_confirmation_instructions
-
-        flash[:error] = "User with this email already exist! We send email to confirm this!"
         @user.destroy!
-        redirect_to root_path
+        redirect_to new_user_session_path, notice: 'This email already exist. Log in and try again.'
       else
         if @user.update(user_params)
           redirect_to root_path, notice: 'Check you mail. We send email to confirm account.'
