@@ -209,6 +209,11 @@ GEM
       websocket-driver (>= 0.2.0)
     private_pub (1.0.3)
       faye
+    pundit (1.1.0)
+      activesupport (>= 3.0.0)
+    pundit-matchers (1.0.2)
+      pundit (~> 1.0, >= 1.0.0)
+      rspec-rails (>= 3.0.0)
     rack (1.6.4)
     rack-test (0.6.3)
       rack (>= 1.0)
@@ -357,6 +362,8 @@ DEPENDENCIES
   phantomjs
   poltergeist
   private_pub
+  pundit
+  pundit-matchers
   rails (= 4.2.6)
   remotipart
   responders

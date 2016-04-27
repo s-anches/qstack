@@ -25,6 +25,7 @@ class QuestionsController < ApplicationController
   end
 
   def update
+    authorize @question
     @question.update(question_params)
     respond_with(@question)
   end
