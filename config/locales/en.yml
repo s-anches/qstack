@@ -21,3 +21,15 @@
 
 en:
   hello: "Hello world"
+  pundit:
+    default: 'You cannot perform this action.'
+    question_policy:
+      new?: 'You cannot create new question!'
+      create?: 'You cannot create new question'
+      update?: 'You cannot update this question'
+      destroy?: 'You cannot destroy this question!'
+    answer_policy:
+      new?: 'You cannot create new answer!'
+      create?: 'You cannot create new answer'
+      update?: 'You cannot update this answer'
+      destroy?: 'You cannot destroy this answer!'

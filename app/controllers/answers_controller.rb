@@ -4,27 +4,29 @@ class AnswersController < ApplicationController
   before_action :authenticate_user!
   before_action :load_question, only: :create
   before_action :load_answer, except: :create
-  before_action :verify_author, only: [:update, :destroy]
-  before_action :verify_author_of_question, only: :set_best
   after_action :publish_to
 
   respond_to :js, :json
 
   def create
+    authorize Answer
     @answer = @question.answers.create(answer_params.merge({ user: current_user }))
     respond_with(@answer)
   end
 
   def update
+    authorize @answer
     @answer.update(answer_params)
     respond_with(@answer)
   end
 
   def destroy
+    authorize @answer
     respond_with(@answer.destroy)
   end
 
   def set_best
+    authorize @answer
     respond_with(@answer.set_best)
   end
 
@@ -35,18 +37,6 @@ class AnswersController < ApplicationController
 
     def load_answer
       @answer = Answer.find(params[:id])
-    end
-
-    def verify_author
-      unless current_user.author_of?(@answer)
-        redirect_to @answer.question
-      end
-    end
-
-    def verify_author_of_question
-      unless current_user.author_of?(@answer.question)
-        redirect_to @answer.question
-      end
     end
 
     def publish_to

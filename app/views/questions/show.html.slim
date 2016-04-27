@@ -4,10 +4,10 @@
       .col-xs-7.question
         = render @question
       .col-xs-5.new-forms
-        - if user_signed_in?
+        - if policy(Answer).create?
           .new_answer
             = render partial: 'answers/form', locals: { answer: [@question, @question.answers.build] }
-        - if user_signed_in? && current_user.author_of?(@question)
+        - if policy(@question).update?
           .edit_question
             = render partial: 'form', locals: { question: @question }
     .row
@@ -15,7 +15,7 @@
         .row.comments
           = render @question.comments
         .row
-          - if user_signed_in?
+          - if policy(Comment).create?
             = link_to 'Add comment', '#', class: 'link-new-comment'
             = render partial: 'comments/form', locals: { commentable: @question, comment: @question.comments.build }
 .row
