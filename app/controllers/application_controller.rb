@@ -1,6 +1,8 @@
 require "application_responder"
 
 class ApplicationController < ActionController::Base
+  include Pundit
+
   self.responder = ApplicationResponder
   respond_to :html
 
@@ -17,8 +19,15 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
+
   private
     def gonify_user_id
       gon.user_id = user_signed_in? ? current_user.id : -1
+    end
+
+    def user_not_authorized
+      flash[:alert] = "You are not authorized to perform this action."
+      redirect_to(request.referrer || root_path)
     end
 end
