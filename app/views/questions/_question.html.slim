@@ -7,12 +7,13 @@
   .row.attachments-list
     = render 'layouts/attachments', object: @question
   .row.actions
-    - if user_signed_in? && current_user.author_of?(@question)
-      .row
-        ul.nav.nav-pills
+    .row
+      ul.nav.nav-pills
+        - if policy(@question).update?
           li => link_to 'Edit', '#', class: 'edit_question'
+        - if policy(@question).destroy?
           li => link_to 'Delete', @question, method: :delete
-    - if user_signed_in?
+    - if policy(Answer).create?
       .row
         ul.nav.nav-pills
           li = link_to 'New answer', '#', class: 'link-new-answer'
