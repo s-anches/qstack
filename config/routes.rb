@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  use_doorkeeper
   devise_for :users, controllers: { omniauth_callbacks: 'users/omniauth_callbacks' }
   match '/users/:id/finish_signup' => 'users#finish_signup', via: [:get, :patch], :as => :finish_signup
   resources :users, only: :show
@@ -21,6 +22,14 @@ Rails.application.routes.draw do
     resources :answers, concerns: [:votable, :commentable] do
       member do
         patch 'set_best'
+      end
+    end
+  end
+
+  namespace :api do
+    namespace :v1 do
+      resource :profiles do
+        get :me, on: :collection
       end
     end
   end
