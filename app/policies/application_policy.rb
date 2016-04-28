@@ -1,4 +1,5 @@
 class ApplicationPolicy
+  include VotePolicy
   attr_reader :user, :record
 
   def initialize(user, record)
@@ -7,7 +8,7 @@ class ApplicationPolicy
   end
 
   def index?
-    false
+    true
   end
 
   def show?
@@ -32,18 +33,6 @@ class ApplicationPolicy
 
   def destroy?
     false
-  end
-
-  def like?
-    user && user.id != record.user_id
-  end
-
-  def dislike?
-    like?
-  end
-
-  def unvote?
-    like?
   end
 
   def scope
