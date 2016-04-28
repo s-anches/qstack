@@ -34,6 +34,18 @@ class ApplicationPolicy
     false
   end
 
+  def like?
+    user && user.id != record.user_id
+  end
+
+  def dislike?
+    like?
+  end
+
+  def unvote?
+    like?
+  end
+
   def scope
     Pundit.policy_scope!(user, record.class)
   end

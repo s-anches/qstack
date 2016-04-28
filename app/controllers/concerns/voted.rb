@@ -6,14 +6,17 @@ module Voted
   end
 
   def like
+    authorize @vote_object
     vote(1)
   end
 
   def dislike
+    authorize @vote_object
     vote(-1)
   end
 
   def unvote
+    authorize @vote_object
     if @vote_object.unvote(current_user)
       render json: { rating: @vote_object.rating, object: @vote_object.id }
     else
