@@ -90,6 +90,8 @@ GEM
       thread_safe (~> 0.1)
       warden (~> 1.2.3)
     diff-lcs (1.2.5)
+    doorkeeper (3.1.0)
+      railties (>= 3.2)
     dotenv (2.1.1)
     dotenv-rails (2.1.1)
       dotenv (= 2.1.1)
@@ -209,6 +211,11 @@ GEM
       websocket-driver (>= 0.2.0)
     private_pub (1.0.3)
       faye
+    pundit (1.1.0)
+      activesupport (>= 3.0.0)
+    pundit-matchers (1.0.2)
+      pundit (~> 1.0, >= 1.0.0)
+      rspec-rails (>= 3.0.0)
     rack (1.6.4)
     rack-test (0.6.3)
       rack (>= 1.0)
@@ -338,6 +345,7 @@ DEPENDENCIES
   coffee-rails (~> 4.1.0)
   database_cleaner
   devise
+  doorkeeper
   dotenv-rails
   execjs
   factory_girl_rails
@@ -357,6 +365,8 @@ DEPENDENCIES
   phantomjs
   poltergeist
   private_pub
+  pundit
+  pundit-matchers
   rails (= 4.2.6)
   remotipart
   responders

@@ -23,10 +23,15 @@ gem 'handlebars_assets'
 gem 'hamlbars'
 gem "responders"
 gem 'active_model_serializers'
+
 gem 'omniauth'
 gem 'omniauth-facebook'
 gem 'omniauth-twitter'
 gem 'omniauth-vkontakte'
+
+gem 'pundit'
+
+gem 'doorkeeper'
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
@@ -50,10 +55,11 @@ group :test do
   gem 'poltergeist'
   gem 'phantomjs', require: 'phantomjs/poltergeist'
   gem 'json_spec'
-  gem "letter_opener"
+  gem 'pundit-matchers'
 end
 
 group :development do
   gem 'web-console', '~> 2.0'
   gem 'spring'
+  gem "letter_opener"
 end

@@ -12,11 +12,12 @@
         = render 'layouts/attachments', object: answer
         - if user_signed_in?
             ul.nav.nav-pills
-              - if current_user.author_of?(answer)
+              - if policy(answer).update?
                 li => link_to 'Edit', '#', id: answer.id, class: 'edit_answer'
+              - if policy(answer).destroy?
                 li = link_to 'Delete', answer_path(answer), method: :delete,
                   class: "delete-answer-link", remote: true
-              - if current_user.author_of?(answer.question)
+              - if policy(answer).set_best?
                 li =< link_to 'Set best', set_best_answer_path(answer), method: :patch, remote: true, data: { type: :json }
       .col-xs-5
         = render 'answers/form', answer: answer
@@ -25,7 +26,7 @@
         .row.comments
           = render answer.comments
         .row
-          - if user_signed_in?
+          - if policy(Comment).create?
             = link_to 'Add comment', '#', class: 'link-new-comment'
             = render partial: 'comments/form', locals: { commentable: answer, comment: answer.comments.build }
     .row

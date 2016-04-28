@@ -98,7 +98,7 @@ RSpec.describe QuestionsController, type: :controller do
 
       it 'redirect to question page' do
         delete :destroy, id: foreign_question
-        expect(response).to redirect_to foreign_question
+        expect(response).to redirect_to root_path
       end
     end
   end
