@@ -1,7 +1,7 @@
 module VotePolicy
   
   def like?
-    user && user.id != record.user_id
+    user && user.id != record.user_id && !user.voted?
   end
 
   def dislike?
@@ -9,7 +9,7 @@ module VotePolicy
   end
 
   def unvote?
-    like?
+    user.voted?
   end
 
 end

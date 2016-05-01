@@ -5,10 +5,12 @@ class Api::V1::ProfilesController < ApplicationController
   respond_to :json
 
   def me
+    authorize :api
     respond_with current_resource_owner
   end
   
   def index
+    authorize :api
     respond_with User.where.not(id: current_resource_owner)
   end
 
