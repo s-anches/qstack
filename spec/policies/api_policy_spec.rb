@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe ApiPolicy do
-  subject { ApiPolicy.new(user) }
+  subject { ApiPolicy.new(user, nil) }
 
   context "for a guest" do
     let(:user) { nil }

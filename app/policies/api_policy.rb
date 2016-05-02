@@ -1,15 +1,9 @@
-class ApiPolicy < ApplicationPolicy
+class ApiPolicy
+  attr_reader :user, :record
 
-  attr_reader :user
-
-  def initialize(user)
+  def initialize(user, record)
     @user = user
-  end
-  
-  class Scope < Scope
-    def resolve
-      scope
-    end
+    @record = record
   end
 
   def index?
@@ -17,7 +11,7 @@ class ApiPolicy < ApplicationPolicy
   end
 
   def me?
-    user
+    index?
   end
 
 end

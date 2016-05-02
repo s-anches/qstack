@@ -18,4 +18,10 @@ class Api::V1::ProfilesController < ApplicationController
     def current_resource_owner
       @current_resource_owner ||= User.find(doorkeeper_token.resource_owner_id) if doorkeeper_token
     end
+
+  private
+    def pundit_user
+      User.find(current_resource_owner.id)
+    end
+
 end
