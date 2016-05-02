@@ -1,15 +1,11 @@
 module VotePolicy
   
-  def like?
-    user && user.id != record.user_id && !user.voted?
-  end
-
-  def dislike?
-    like?
+  def can_vote?
+    user && (user.id != record.user_id && !user.voted?(record))
   end
 
   def unvote?
-    user.voted?
+    user && user.voted?(record)
   end
 
 end

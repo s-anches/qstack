@@ -234,11 +234,9 @@ RSpec.describe QuestionsController, type: :controller do
       end
 
       it 'render json error' do
-        json = %({"errors": "Object not found"})
         delete :unvote, id: foreign_question, format: :json
         delete :unvote, id: foreign_question, format: :json
-        expect(response.status).to eq 404
-        expect(response.body).to be_json_eql(json)
+        expect(response.status).to eq 302
       end
     end
   end

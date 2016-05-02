@@ -2,12 +2,10 @@
     h6 Rating:
     h3 = object.rating
 .row
-  ul.nav.nav-pills.center-pills
-    - if policy(object).dislike?
-      li = vote_link(object, :dislike)
-    - if policy(object).like?
-      li = vote_link(object, :like)
-.row
-  ul.nav.nav-pills.center-pills
-    - if policy(object).unvote?
-      li = vote_link(object, :unvote)
+  - if policy(object).can_vote?
+    ul.nav.nav-pills.center-pills#vote-links
+      li.dislike = vote_link(object, :dislike)
+      li.like = vote_link(object, :like)
+  - if policy(object).unvote?
+    ul.nav.nav-pills.center-pills#vote-links
+      li.unvote = vote_link(object, :unvote)

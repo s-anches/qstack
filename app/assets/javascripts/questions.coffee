@@ -32,21 +32,14 @@
     response = $.parseJSON(xhr.responseText)
     updateRating(data.object, data.id, response.rating)
 
-    if data.action == 'like'
-      $(this).addClass('liked not-active')
-      $(".link-dislike[data-object='"+data.object+"'][data-id='"+data.id+"']").addClass('not-active')
-      $(".link-unvote[data-object='"+data.object+"'][data-id='"+data.id+"']").removeClass('not-active')
-
-    if data.action == 'dislike'
-      $(this).addClass('disliked not-active')
-      $(".link-like[data-object='"+data.object+"'][data-id='"+data.id+"']").addClass('not-active')
-      $(".link-unvote[data-object='"+data.object+"'][data-id='"+data.id+"']").removeClass('not-active')
-
+    if data.action == 'like' || data.action == 'dislike'
+      $('#'+data.object+'-'+data.id+' .votes .like, #'+data.object+'-'+data.id+' .votes .dislike').remove()
+      $('#'+data.object+'-'+data.id+' #vote-links').append('<li class="unvote"><a class="link-unvote" data-type="json" data-id="'+data.id+'" data-object="'+data.object+'" data-action="unvote" data-remote="true" rel="nofollow" data-method="delete" data-confirm="Вы уверены что хотите отменить голос?" href="/'+data.object+'s/'+data.id+'/unvote">Unvote</a></li>')
     if data.action == 'unvote'
-      $(this).addClass('not-active')
-      $(".link-like[data-object='"+data.object+"'][data-id='"+data.id+"']").removeClass('liked not-active')
-      $(".link-dislike[data-object='"+data.object+"'][data-id='"+data.id+"']").removeClass('disliked not-active')
-
+      $('#'+data.object+'-'+data.id+' .votes .unvote').remove()
+      $('#'+data.object+'-'+data.id+' #vote-links').append('<li class="dislike"><a class="link-dislike" data-type="json" data-id="'+data.id+'" data-object="'+data.object+'" data-action="dislike" data-remote="true" rel="nofollow" data-method="patch" href="/'+data.object+'s/'+data.id+'/dislike">-</a></li>')
+      $('#'+data.object+'-'+data.id+' #vote-links').append('<li class="like"><a class="link-like" data-type="json" data-id="'+data.id+'" data-object="'+data.object+'" data-action="like" data-remote="true" rel="nofollow" data-method="patch" href="/'+data.object+'s/'+data.id+'/like">+</a></li>')
+    bindLinkVotes()
   .bind "ajax:error", (e, xhr, status, error) ->
     response = $.parseJSON(xhr.responseText)
     $.each response, (index, value) ->

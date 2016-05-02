@@ -6,12 +6,12 @@ module Voted
   end
 
   def like
-    authorize @vote_object
+    authorize @vote_object, :can_vote?
     vote(1)
   end
 
   def dislike
-    authorize @vote_object
+    authorize @vote_object, :can_vote?
     vote(-1)
   end
 
@@ -19,8 +19,6 @@ module Voted
     authorize @vote_object
     if @vote_object.unvote(current_user)
       render json: { rating: @vote_object.rating, object: @vote_object.id }
-    else
-      render json: { errors: 'Object not found' }, status: :not_found
     end
   end
 
