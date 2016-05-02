@@ -93,4 +93,56 @@ describe 'Questions API' do
       end
     end
   end
+
+  describe 'POST #create' do
+    let(:user) { create(:user) }
+    let(:access_token) { create(:access_token, resource_owner_id: user.id) }
+
+    context 'authorized' do
+      context 'with valid attributes' do
+        let(:attributes) { attributes_for(:question) }
+
+        it 'create new question for user' do
+          expect {
+            post '/api/v1/questions', format: :json, access_token: access_token.token, question: attributes
+          }.to change(user.questions, :count).by(1)
+        end
+
+        it "return created question" do
+          post '/api/v1/questions', format: :json, access_token: access_token.token, question: attributes
+          attributes.each do |key, value|
+            expect(response.body).to be_json_eql(value.to_json).at_path("question/#{key}")
+          end
+        end
+      end
+
+      context 'with invalid attributes' do
+        let(:attributes) { attributes_for(:question, body: nil, title: nil) }
+
+        it 'does not create question' do
+          expect {
+            post '/api/v1/questions', format: :json, access_token: access_token.token, question: attributes
+          }.to_not change(Question, :count)
+        end
+
+        it 'return error' do
+          post '/api/v1/questions', format: :json, access_token: access_token.token, question: attributes
+          expect(response.status).to eq 422
+          expect(response.body).to have_json_path('errors')
+        end
+      end
+    end
+
+    context 'unauthorized' do
+      it 'return 401 status if there is no access token' do
+        post "/api/v1/questions", format: :json
+        expect(response.status).to eq 401
+      end
+
+      it 'return 401 status if access token is invalid' do
+        post "/api/v1/questions", format: :json, access_token: '1234'
+        expect(response.status).to eq 401
+      end
+    end
+  end
 end

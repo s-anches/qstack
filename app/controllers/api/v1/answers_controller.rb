@@ -3,11 +3,13 @@ class Api::V1::AnswersController < Api::V1::BaseController
   before_action :find_answer, only: :show
 
   def index
+    authorize :api
     @answers = @question.answers.all
     respond_with @answers
   end
 
   def show
+    authorize :api
     respond_with @answer
   end
 

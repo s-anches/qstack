@@ -10,6 +10,14 @@ class ApiPolicy
     user
   end
 
+  def show?
+    user
+  end
+
+  def create?
+    user
+  end
+
   def me?
     index?
   end
