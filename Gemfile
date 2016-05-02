@@ -33,6 +33,9 @@ gem 'pundit'
 
 gem 'doorkeeper'
 
+gem 'oj'
+gem 'oj_mimic_json'
+
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 # Use Unicorn as the app server
