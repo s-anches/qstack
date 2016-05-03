@@ -13,7 +13,7 @@ class Api::V1::QuestionsController < Api::V1::BaseController
 
   def create
     authorize :api
-    respond_with(@question = @user.questions.create(question_params))
+    respond_with(@question = current_resource_owner.questions.create(question_params))
   end
 
   private

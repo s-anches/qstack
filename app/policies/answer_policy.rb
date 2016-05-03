@@ -1,12 +1,6 @@
 class AnswerPolicy < ApplicationPolicy
-  include DefaultPolicy
+  include VotePolicy
   
-  class Scope < Scope
-    def resolve
-      scope
-    end
-  end
-
   def set_best?
     user && user.id == record.question.user_id
   end

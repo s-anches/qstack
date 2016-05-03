@@ -15,7 +15,7 @@ class Api::V1::AnswersController < Api::V1::BaseController
 
   def create
     authorize :api
-    respond_with(@answer = @question.answers.create(answer_params.merge({ user: @user })))
+    respond_with(@answer = @question.answers.create(answer_params.merge({ user: current_resource_owner })))
   end
 
   private

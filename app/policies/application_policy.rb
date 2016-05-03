@@ -1,5 +1,4 @@
 class ApplicationPolicy
-  include VotePolicy
   attr_reader :user, :record
 
   def initialize(user, record)
@@ -16,7 +15,7 @@ class ApplicationPolicy
   end
 
   def create?
-    false
+    user
   end
 
   def new?
@@ -24,7 +23,7 @@ class ApplicationPolicy
   end
 
   def update?
-    false
+    user && (user.admin? || user.id == record.user_id)
   end
 
   def edit?
@@ -32,7 +31,7 @@ class ApplicationPolicy
   end
 
   def destroy?
-    false
+    update?
   end
 
   def scope
