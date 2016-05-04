@@ -1,4 +1,4 @@
-RSpec.shared_examples_for 'votable' do
+shared_examples_for 'votable' do
   let (:model) { create ( described_class.to_s.underscore ) }
   let (:user) { create (:user) }
 

@@ -5,6 +5,8 @@ describe AnswerPolicy do
 
   let(:question) { create(:question) }
   let(:answer) { create(:answer) }
+  
+  it_behaves_like 'Policy Votable'
 
   context "for a guest" do
     let(:user) { nil }
