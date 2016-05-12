@@ -34,12 +34,22 @@ RSpec.describe CommentsController, type: :controller do
         post :create, question_id: question.id, comment: attributes_for(:comment), format: :js
         expect(response).to render_template :create
       end
+
+       it 'publish new comment' do
+        expect(PrivatePub).to receive(:publish_to).with("/questions/#{question.id}/comments", instance_of(Hash))
+        post :create, question_id: question.id, comment: attributes_for(:comment), format: :js
+      end
     end
 
     context 'with invalid attributes' do
       it "does not save new comment in the database" do
         expect { post :create, question_id: question.id, comment: attributes_for(:invalid_comment), format: :js }
           .to_not change(Comment, :count)
+      end
+      
+      it 'does not publish new question' do
+        expect(PrivatePub).not_to receive(:publish_to)
+        post :create, question_id: question.id, comment: attributes_for(:invalid_comment), format: :js
       end
     end
   end

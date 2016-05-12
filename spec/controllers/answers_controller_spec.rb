@@ -3,8 +3,8 @@ require 'rails_helper'
 RSpec.describe AnswersController, type: :controller do
   let(:user) { create :user }
   let(:question) { create(:question, user: user) }
-  let!(:own_answer) { create(:answer, user: user, question: question) }
-  let!(:foreign_answer) { create(:answer, question: question) }
+  let!(:own_object) { create(:answer, user: user, question: question) }
+  let!(:foreign_object) { create(:answer, question: question) }
   let!(:foreign_answer_two) { create(:answer, question: question, best: true) }
   let(:answer) { create(:answer) }
 
@@ -24,11 +24,21 @@ RSpec.describe AnswersController, type: :controller do
         post :create, question_id: question.id, answer: attributes_for(:answer), format: :js
         expect(response).to render_template :create
       end
+
+      it 'publish new answer' do
+        expect(PrivatePub).to receive(:publish_to).with("/questions/#{question.id}/answers", instance_of(Hash))
+        post :create, question_id: question.id, answer: attributes_for(:answer), format: :js
+      end
     end
 
     context 'with invalid attributes' do
       it 'does not save the new answer in the database' do
         expect { post :create, question_id: question.id, answer: attributes_for(:invalid_answer), format: :js }.to_not change(Answer, :count)
+      end
+
+      it 'does not publish new answer' do
+        expect(PrivatePub).not_to receive(:publish_to)
+        post :create, question_id: question.id, answer: attributes_for(:invalid_answer), format: :js
       end
     end
   end
@@ -38,20 +48,30 @@ RSpec.describe AnswersController, type: :controller do
       sign_in(user)
     end
 
-    context 'Author' do
+    context 'his answer' do
       it 'delete his answer' do
-        expect { delete :destroy, id: own_answer, format: :js }.to change(Answer, :count).by(-1)
+        expect { delete :destroy, id: own_object, format: :js }.to change(Answer, :count).by(-1)
       end
 
       it 'render destroy template' do
-        delete :destroy, id: own_answer, format: :js
+        delete :destroy, id: own_object, format: :js
         expect(response).to render_template :destroy
+      end
+
+      it 'publish destroy answer' do
+        expect(PrivatePub).to receive(:publish_to).with("/questions/#{question.id}/answers", instance_of(Hash))
+        delete :destroy, id: own_object, format: :js
       end
     end
 
-    context 'Non-author' do
+    context 'foreign answer' do
       it 'do not delete other owner answer' do
-        expect { delete :destroy, id: foreign_answer, format: :js }.to_not change(Answer, :count)
+        expect { delete :destroy, id: foreign_object, format: :js }.to_not change(Answer, :count)
+      end
+
+      it 'does not publish destroy answer' do
+        expect(PrivatePub).not_to receive(:publish_to)
+        delete :destroy, id: foreign_object, format: :js
       end
     end
   end
@@ -60,34 +80,53 @@ RSpec.describe AnswersController, type: :controller do
     context 'Authenticated user' do
       before { sign_in(user) }
 
-      it 'assigns the requested answer to @answer' do
-        patch :update, id: own_answer, answer: attributes_for(:answer), format: :js
-        expect(assigns(:answer)).to eq own_answer
+      context 'his answer' do
+        it 'assigns the requested answer to @answer' do
+          patch :update, id: own_object, answer: attributes_for(:answer), format: :js
+          expect(assigns(:answer)).to eq own_object
+        end
+
+        it 'change his answer attributes' do
+          patch :update, id: own_object, answer: { body: 'new body' }, format: :js
+          own_object.reload
+          expect(own_object.body).to eq 'new body'
+        end
+
+        it 'render update template' do
+          patch :update, id: own_object, answer: attributes_for(:answer), format: :js
+          expect(response).to render_template :update
+        end
+
+        it 'publish update answer' do
+          expect(PrivatePub).to receive(:publish_to).with("/questions/#{question.id}/answers", instance_of(Hash))
+          patch :update, id: own_object, answer: attributes_for(:answer), format: :js
+        end
       end
 
-      it 'change his answer attributes' do
-        patch :update, id: own_answer, answer: { body: 'new body' }, format: :js
-        own_answer.reload
-        expect(own_answer.body).to eq 'new body'
-      end
+      context 'foreign answer' do
+        it 'do not change other owner answer attributes' do
+          patch :update, id: foreign_object, answer: { body: 'new body' }, format: :js
+          foreign_object.reload
+          expect(foreign_object.body).to_not eq 'new body'
+        end
 
-      it 'do not change other owner answer attributes' do
-        patch :update, id: foreign_answer, answer: { body: 'new body' }, format: :js
-        foreign_answer.reload
-        expect(foreign_answer.body).to_not eq 'new body'
-      end
-
-      it 'render update template' do
-        patch :update, id: own_answer, answer: attributes_for(:answer), format: :js
-        expect(response).to render_template :update
+        it 'does not publish update answer' do
+          expect(PrivatePub).not_to receive(:publish_to)
+          patch :update, id: foreign_object, answer: { body: 'new body' }, format: :js
+        end
       end
     end
 
     context 'Non-authenticated user' do
       it 'do not change answer attributes' do
-        patch :update, id: own_answer, answer: { body: 'new body' }, format: :js
-        own_answer.reload
-        expect(own_answer.body).to_not eq 'new body'
+        patch :update, id: own_object, answer: { body: 'new body' }, format: :js
+        own_object.reload
+        expect(own_object.body).to_not eq 'new body'
+      end
+
+      it 'does not publish update answer' do
+        expect(PrivatePub).not_to receive(:publish_to)
+        patch :update, id: own_object, answer: { body: 'new body' }, format: :js
       end
     end
   end
@@ -96,133 +135,55 @@ RSpec.describe AnswersController, type: :controller do
     context 'Authenticated user' do
       before { sign_in(user) }
 
-      it 'set best answer flag on own question' do
-        patch :set_best, id: foreign_answer, format: :json
-        foreign_answer.reload
-        expect(foreign_answer.best).to eq true
+      context 'his question' do
+        it 'set best answer flag' do
+          patch :set_best, id: foreign_object, format: :json
+          foreign_object.reload
+          expect(foreign_object.best).to eq true
+        end
+
+        it 'change best answer' do
+          expect(foreign_answer_two.best).to eq true
+          patch :set_best, id: foreign_object, format: :json
+          foreign_object.reload
+          foreign_answer_two.reload
+          expect(foreign_answer_two.best).to eq false
+          expect(foreign_object.best).to eq true
+        end
+
+        it 'publish set_best answer' do
+          expect(PrivatePub).to receive(:publish_to).with("/questions/#{question.id}/answers", instance_of(Hash))
+          patch :set_best, id: foreign_object, format: :json
+        end
       end
 
-      it 'change best answer on own question' do
-        expect(foreign_answer_two.best).to eq true
-        patch :set_best, id: foreign_answer, format: :json
-        foreign_answer.reload
-        foreign_answer_two.reload
-        expect(foreign_answer_two.best).to eq false
-        expect(foreign_answer.best).to eq true
-      end
+      context 'foreign question' do
+        it 'do not set best answer flag' do
+          patch :set_best, id: answer, format: :json
+          answer.reload
+          expect(answer.best).to eq false
+        end
 
-      it 'do not set best answer flag on foreign question' do
-        patch :set_best, id: answer, format: :json
-        answer.reload
-        expect(answer.best).to eq false
+        it 'does not publish set_best answer' do
+          expect(PrivatePub).not_to receive(:publish_to)
+          patch :set_best, id: answer, format: :json
+        end
       end
     end
 
     context 'Non-authenticated user' do
       it 'do not set best answer flag on any question' do
-        patch :set_best, id: own_answer, format: :json
-        own_answer.reload
-        expect(own_answer.best).to eq false
+        patch :set_best, id: own_object, format: :json
+        own_object.reload
+        expect(own_object.best).to eq false
+      end
+
+      it 'does not publish set_best answer' do
+        expect(PrivatePub).not_to receive(:publish_to)
+        patch :set_best, id: own_object, format: :json
       end
     end
   end
 
-  describe 'PATCH #like' do
-    context 'Authenticated user' do
-      before { sign_in(user) }
-
-      it 'can not like own answer' do
-        expect{ patch :like, id: own_answer, format: :json}.to_not change(own_answer.votes, :count)
-      end
-
-      it 'can like foreign answer' do
-        expect{ patch :like, id: foreign_answer, format: :json }.to change(foreign_answer.votes, :count).by(1)
-      end
-
-      it 'can like only once' do
-        expect{ patch :like, id: foreign_answer, format: :json }.to change(foreign_answer.votes, :count).by(1)
-        expect{ patch :like, id: foreign_answer, format: :json }.to_not change(foreign_answer.votes, :count)
-      end
-
-      it 'render json' do
-        json = %({"object": #{foreign_answer.id}, "rating": 1})
-        patch :like, id: foreign_answer, format: :json
-        expect(response.body).to be_json_eql(json)
-      end
-    end
-
-    context 'Non-authenticated user' do
-      it 'can not like answer' do
-        expect{ patch :like, id: foreign_answer, format: :json }.to_not change(Vote, :count)
-      end
-
-      it 'render json' do
-        json = %({"error": "You need to sign in or sign up before continuing."})
-        patch :like, id: foreign_answer, format: :json
-        expect(response.body).to be_json_eql(json)
-      end
-    end
-  end
-
-  describe 'PATCH #dislike' do
-    context 'Authenticated user' do
-      before { sign_in(user) }
-
-      it 'can not dislike own answer' do
-        expect{ patch :dislike, id: own_answer, format: :json}.to_not change(own_answer.votes, :count)
-      end
-
-      it 'can dislike foreign answer' do
-        expect{ patch :dislike, id: foreign_answer, format: :json }.to change(foreign_answer.votes, :count).by(1)
-      end
-
-      it 'can dislike only once' do
-        expect{ patch :dislike, id: foreign_answer, format: :json }.to change(foreign_answer.votes, :count).by(1)
-        expect{ patch :dislike, id: foreign_answer, format: :json }.to_not change(foreign_answer.votes, :count)
-      end
-
-      it 'render json' do
-        json = %({"object": #{foreign_answer.id}, "rating": -1})
-        patch :dislike, id: foreign_answer, format: :json
-        expect(response.body).to be_json_eql(json)
-      end
-    end
-
-    context 'Non-authenticated user' do
-      it 'can not dislike answer' do
-        expect{ patch :dislike, id: foreign_answer, format: :json }.to_not change(Vote, :count)
-      end
-
-      it 'render json' do
-        json = %({"error": "You need to sign in or sign up before continuing."})
-        patch :dislike, id: foreign_answer, format: :json
-        expect(response.body).to be_json_eql(json)
-      end
-    end
-  end
-
-  describe 'DELETE #unvote' do
-    context 'Authenticated user' do
-      before do
-        sign_in(user)
-        patch :like, id: foreign_answer, format: :json
-      end
-
-      it 'Owner can delete his vote' do
-        expect { delete :unvote, id: foreign_answer, format: :json }.to change(foreign_answer.votes, :count).by(-1)
-      end
-
-      it 'render json success' do
-        json = %({"object": #{foreign_answer.id}, "rating": 0})
-        delete :unvote, id: foreign_answer, format: :json
-        expect(response.body).to be_json_eql(json)
-      end
-
-      it 'render json error' do
-        delete :unvote, id: foreign_answer, format: :json
-        delete :unvote, id: foreign_answer, format: :json
-        expect(response.status).to eq 302
-      end
-    end
-  end
+  it_behaves_like 'voted'
 end

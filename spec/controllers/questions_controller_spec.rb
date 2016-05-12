@@ -2,10 +2,10 @@ require 'rails_helper'
 
 RSpec.describe QuestionsController, type: :controller do
   let(:user) { create :user }
-  let(:own_question) { create :question, user: user }
-  let(:foreign_question) { create :question }
+  let(:own_object) { create :question, user: user }
+  let(:foreign_object) { create :question }
   let(:questions) { create_list :question, 2 }
-  let(:answers) { create_list(:answer, 5, question: own_question) }
+  let(:answers) { create_list(:answer, 5, question: own_object) }
 
   before { @request.env['devise.mapping'] = Devise.mappings[:user] }
 
@@ -21,10 +21,10 @@ RSpec.describe QuestionsController, type: :controller do
   end
 
   describe 'GET #show' do
-    before { get :show, id: own_question }
+    before { get :show, id: own_object }
 
     it 'assigns the requested question' do
-      expect(assigns(:question)).to eq own_question
+      expect(assigns(:question)).to eq own_object
     end
 
     it 'render show view' do
@@ -59,6 +59,11 @@ RSpec.describe QuestionsController, type: :controller do
         post :create, question: attributes_for(:question)
         expect(response).to redirect_to question_path(assigns(:question))
       end
+
+      it 'publish new question' do
+        expect(PrivatePub).to receive(:publish_to).with("/questions", instance_of(Hash))
+        post :create, question: attributes_for(:question)
+      end
     end
 
     context 'with invalid attributes' do
@@ -70,35 +75,50 @@ RSpec.describe QuestionsController, type: :controller do
         post :create, question: attributes_for(:invalid_question)
         expect(response).to render_template :new
       end
+
+      it 'does not publish new question' do
+        expect(PrivatePub).not_to receive(:publish_to)
+        post :create, question: attributes_for(:invalid_question)
+      end
     end
   end
 
   describe 'DELETE #destroy' do
     before do
       sign_in(user)
-      own_question
-      foreign_question
+      own_object
+      foreign_object
     end
 
     context 'Author' do
       it 'delete his question' do
-        expect { delete :destroy, id: own_question }.to change(Question, :count).by(-1)
+        expect { delete :destroy, id: own_object }.to change(Question, :count).by(-1)
       end
 
       it 'redirect to index view' do
-        delete :destroy, id: own_question
+        delete :destroy, id: own_object
         expect(response).to redirect_to questions_path
+      end
+
+      it 'publish destroy question' do
+        expect(PrivatePub).to receive(:publish_to).with("/questions", instance_of(Hash))
+        delete :destroy, id: own_object
       end
     end
 
     context 'Non-author' do
       it 'do not delete other owner question' do
-        expect { delete :destroy, id: foreign_question }.to_not change(Question, :count)
+        expect { delete :destroy, id: foreign_object }.to_not change(Question, :count)
       end
 
       it 'redirect to question page' do
-        delete :destroy, id: foreign_question
+        delete :destroy, id: foreign_object
         expect(response).to redirect_to root_path
+      end
+
+      it 'does not publish destroy question' do
+        expect(PrivatePub).not_to receive(:publish_to)
+        delete :destroy, id: foreign_object
       end
     end
   end
@@ -107,137 +127,59 @@ RSpec.describe QuestionsController, type: :controller do
     context 'Authenticated user' do
       before { sign_in(user) }
 
-      it 'assigns the requested question to @question' do
-        patch :update, id: own_question, question: attributes_for(:question), format: :js
-        expect(assigns(:question)).to eq own_question
+      context 'his question' do
+        it 'assigns the requested question to @question' do
+          patch :update, id: own_object, question: attributes_for(:question), format: :js
+          expect(assigns(:question)).to eq own_object
+        end
+
+        it 'change his question attributes' do
+          patch :update, id: own_object, question: { title: 'Edited title', body: 'Edited body' }, format: :js
+          own_object.reload
+          expect(own_object.title).to eq 'Edited title'
+          expect(own_object.body).to eq 'Edited body'
+        end
+
+        it 'render update template' do
+          patch :update, id: own_object, question: attributes_for(:question), format: :js
+          expect(response).to render_template :update
+        end
+
+        it 'publish update question' do
+          expect(PrivatePub).to receive(:publish_to).with("/questions", instance_of(Hash))
+          patch :update, id: own_object, question: attributes_for(:question), format: :js
+        end
       end
 
-      it 'change his question attributes' do
-        patch :update, id: own_question, question: { title: 'Edited title', body: 'Edited body' }, format: :js
-        own_question.reload
-        expect(own_question.title).to eq 'Edited title'
-        expect(own_question.body).to eq 'Edited body'
-      end
+      context 'foreign question' do
+        it 'do not change foreign question attributes' do
+          patch :update, id: foreign_object, question: { title: 'Edited title', body: 'Edited body' }, format: :js
+          foreign_object.reload
+          expect(foreign_object.title).to_not eq 'Edited title'
+          expect(foreign_object.body).to_not eq 'Edited body'
+        end
 
-      it 'do not change foreign question attributes' do
-        patch :update, id: foreign_question, question: { title: 'Edited title', body: 'Edited body' }, format: :js
-        foreign_question.reload
-        expect(foreign_question.title).to_not eq 'Edited title'
-        expect(foreign_question.body).to_not eq 'Edited body'
-      end
-
-      it 'render update template' do
-        patch :update, id: own_question, question: attributes_for(:question), format: :js
-        expect(response).to render_template :update
+        it 'does not publish update question' do
+          expect(PrivatePub).not_to receive(:publish_to)
+          patch :update, id: foreign_object, question: { title: 'Edited title', body: 'Edited body' }, format: :js
+        end
       end
     end
 
     context 'Non-authenticated user' do
       it 'do not change question attributes' do
-        patch :update, id: own_question, question: { title: 'Edited title', body: 'Edited body' }, format: :js
-        own_question.reload
-        expect(own_question.title).to_not eq 'Edited title'
-        expect(own_question.body).to_not eq 'Edited body'
+        patch :update, id: own_object, question: { title: 'Edited title', body: 'Edited body' }, format: :js
+        own_object.reload
+        expect(own_object.title).to_not eq 'Edited title'
+        expect(own_object.body).to_not eq 'Edited body'
+      end
+
+      it 'does not publish update question' do
+        expect(PrivatePub).not_to receive(:publish_to)
+        patch :update, id: own_object, question: { title: 'Edited title', body: 'Edited body' }, format: :js
       end
     end
   end
 
-  describe 'PATCH #like' do
-    context 'Authenticated user' do
-      before { sign_in(user) }
-
-      it 'can not like own question' do
-        expect{ patch :like, id: own_question, format: :json}.to_not change(own_question.votes, :count)
-      end
-
-      it 'can like foreign question' do
-        expect{ patch :like, id: foreign_question, format: :json }.to change(foreign_question.votes, :count).by(1)
-      end
-
-      it 'can like only once' do
-        expect{ patch :like, id: foreign_question, format: :json }.to change(foreign_question.votes, :count).by(1)
-        expect{ patch :like, id: foreign_question, format: :json }.to_not change(foreign_question.votes, :count)
-      end
-
-      it 'render json' do
-        json = %({"object": #{foreign_question.id}, "rating": 1})
-        patch :like, id: foreign_question, format: :json
-        expect(response.body).to be_json_eql(json)
-      end
-    end
-
-    context 'Non-authenticated user' do
-      it 'can not like question' do
-        expect{ patch :like, id: foreign_question, format: :json }.to_not change(Vote, :count)
-      end
-
-      it 'render json' do
-        json = %({"error": "You need to sign in or sign up before continuing."})
-        patch :like, id: foreign_question, format: :json
-        expect(response.body).to be_json_eql(json)
-      end
-    end
-  end
-
-  describe 'PATCH #dislike' do
-    context 'Authenticated user' do
-      before { sign_in(user) }
-
-      it 'can not dislike own question' do
-        expect{ patch :dislike, id: own_question, format: :json}.to_not change(own_question.votes, :count)
-      end
-
-      it 'can dislike foreign question' do
-        expect{ patch :dislike, id: foreign_question, format: :json }.to change(foreign_question.votes, :count).by(1)
-      end
-
-      it 'can dislike only once' do
-        expect{ patch :dislike, id: foreign_question, format: :json }.to change(foreign_question.votes, :count).by(1)
-        expect{ patch :dislike, id: foreign_question, format: :json }.to_not change(foreign_question.votes, :count)
-      end
-
-      it 'render json' do
-        json = %({"object": #{foreign_question.id}, "rating": -1})
-        patch :dislike, id: foreign_question, format: :json
-        expect(response.body).to be_json_eql(json)
-      end
-    end
-
-    context 'Non-authenticated user' do
-      it 'can not dislike question' do
-        expect{ patch :dislike, id: foreign_question, format: :json }.to_not change(Vote, :count)
-      end
-
-      it 'render json' do
-        json = %({"error": "You need to sign in or sign up before continuing."})
-        patch :dislike, id: foreign_question, format: :json
-        expect(response.body).to be_json_eql(json)
-      end
-    end
-  end
-
-  describe 'DELETE #unvote' do
-    context 'Authenticated user' do
-      before do
-        sign_in(user)
-        patch :like, id: foreign_question, format: :json
-      end
-
-      it 'Owner can delete his vote' do
-        expect { delete :unvote, id: foreign_question, format: :json }.to change(foreign_question.votes, :count).by(-1)
-      end
-
-      it 'render json success' do
-        json = %({"object": #{foreign_question.id}, "rating": 0})
-        delete :unvote, id: foreign_question, format: :json
-        expect(response.body).to be_json_eql(json)
-      end
-
-      it 'render json error' do
-        delete :unvote, id: foreign_question, format: :json
-        delete :unvote, id: foreign_question, format: :json
-        expect(response.status).to eq 302
-      end
-    end
-  end
+  it_behaves_like 'voted'
 end
