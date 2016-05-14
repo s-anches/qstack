@@ -14,7 +14,7 @@ shared_examples_for 'Policy Votable' do
   context 'for a user' do
     let(:user) { create(:user) }
 
-    context "his model"  do
+    context "his model" do
       let (:model) { create(klass, user: user) }
       it { should forbid_action(:can_vote) }
       it { should forbid_action(:unvote)   }

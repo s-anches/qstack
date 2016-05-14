@@ -15,23 +15,13 @@ describe 'Answers API' do
         expect(response).to be_success
       end
 
-      %w(id body created_at updated_at question_id best).each do |attr|
-        it "answer object contains #{attr}" do
-          expect(response.body).to be_json_eql(answer.send(attr.to_sym).to_json).at_path("answers/0/#{attr}")
-        end
-      end
+      it_behaves_like "json list", %w(id body created_at updated_at question_id best), :answer, "answers/0/"
     end
 
-    context 'unauthorized' do
-      it 'return 401 status if there is no access token' do
-        get "/api/v1/questions/#{question.id}/answers", format: :json
-        expect(response.status).to eq 401
-      end
+    it_behaves_like "API Authenticable"
 
-      it 'return 401 status if access token is invalid' do
-        get "/api/v1/questions/#{question.id}/answers", format: :json, access_token: '1234'
-        expect(response.status).to eq 401
-      end
+    def do_request(options = {})
+      get "/api/v1/questions/#{question.id}/answers", { format: :json }.merge(options)
     end
   end
 
@@ -43,22 +33,14 @@ describe 'Answers API' do
         expect(response).to be_success
       end
 
-      %w(id body created_at updated_at question_id best).each do |attr|
-        it "answer object contains #{attr}" do
-          expect(response.body).to be_json_eql(answer.send(attr.to_sym).to_json).at_path("answer/#{attr}")
-        end
-      end
+      it_behaves_like "json list", %w(id body created_at updated_at question_id best), :answer, "answer/"
 
       context 'comments' do
         it 'include in answer object' do
           expect(response.body).to have_json_size(1).at_path("answer/comments")
         end
 
-        %w(id body created_at).each do |attr|
-          it "contains #{attr}" do
-            expect(response.body).to be_json_eql(comment.send(attr.to_sym).to_json).at_path("answer/comments/0/#{attr}")
-          end
-        end
+        it_behaves_like "json list", %w(id body created_at), :comment, "answer/comments/0/"
       end
 
       context 'attachments' do
@@ -66,25 +48,15 @@ describe 'Answers API' do
           expect(response.body).to have_json_size(1).at_path("answer/attachments")
         end
 
-        %w(id url).each do |attr|
-          it "contains #{attr}" do
-            expect(response.body).to be_json_eql(attachment.send(attr.to_sym).to_json).at_path("answer/attachments/0/#{attr}")
-          end
-        end
+        it_behaves_like "json list", %w(id url), :attachment, "answer/attachments/0/"
       end
     end
 
-    context 'unauthorized' do
-      it 'return 401 status if there is no access token' do
-        get "/api/v1/questions/#{question.id}/answers/#{answer.id}", format: :json
-        expect(response.status).to eq 401
-      end
+    it_behaves_like "API Authenticable"
 
-      it 'return 401 status if access token is invalid' do
-        get "/api/v1/questions/#{question.id}/answers/#{answer.id}", format: :json, access_token: '1234'
-        expect(response.status).to eq 401
-      end
-    end  
+    def do_request(options = {})
+      get "/api/v1/questions/#{question.id}/answers/#{answer.id}", { format: :json }.merge(options)
+    end
   end
 
   describe 'POST #create' do
@@ -133,16 +105,10 @@ describe 'Answers API' do
       end
     end
 
-    context 'unauthorized' do
-      it 'return 401 status if there is no access token' do
-        post "/api/v1/questions/#{question.id}/answers", format: :json
-        expect(response.status).to eq 401
-      end
+    it_behaves_like "API Authenticable"
 
-      it 'return 401 status if access token is invalid' do
-        post "/api/v1/questions/#{question.id}/answers", format: :json, access_token: '1234'
-        expect(response.status).to eq 401
-      end
+    def do_request(options = {})
+      post "/api/v1/questions/#{question.id}/answers", { format: :json }.merge(options)
     end
   end
 end

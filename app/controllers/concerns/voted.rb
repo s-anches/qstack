@@ -1,6 +1,7 @@
 module Voted
   extend ActiveSupport::Concern
-
+  include Introspected
+  
   included do
     before_action :find_vote, only: [:like, :dislike, :unvote]
   end

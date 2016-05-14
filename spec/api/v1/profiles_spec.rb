@@ -12,36 +12,21 @@ describe 'Profile API' do
         expect(response).to be_success
       end
 
-      %w(id email created_at updated_at admin).each do |attr|
-        it "contains #{attr}" do
-          expect(response.body).to be_json_eql(me.send(attr.to_sym).to_json).at_path(attr)
-        end
-      end
-
-      %w(password encrypted_password).each do |attr|
-        it "does not contain #{attr}" do
-          expect(response.body).to_not have_json_path(attr)
-        end
-      end
+      it_behaves_like "json list", %w(id email created_at updated_at admin), :me, ""
+      it_behaves_like "json path exclusion", %w(password encrypted_password), ""
     end
 
-    context 'unauthorized' do
-      it 'return 401 status if there is no access token' do
-        get '/api/v1/profiles/me', format: :json
-        expect(response.status).to eq 401
-      end
+    it_behaves_like "API Authenticable"
 
-      it 'return 401 status if access token is invalid' do
-        get '/api/v1/profiles/me', format: :json, access_token: '1234'
-        expect(response.status).to eq 401
-      end
+    def do_request(options = {})
+      get "/api/v1/profiles/me", { format: :json }.merge(options)
     end
   end
 
   describe 'GET /' do
     context 'authorized' do
       let(:me) { create(:user) }
-      let!(:others) { create_list(:user, 5) }
+      let!(:others) { create_list(:user, 2) }
       let(:access_token) { create(:access_token, resource_owner_id: me.id) }
 
       before { get '/api/v1/profiles', format: :json, access_token: access_token.token }
@@ -61,24 +46,17 @@ describe 'Profile API' do
       it 'contains all other index' do
         expect(response.body).to include_json(others.to_json)
       end
-
-      %w(password encrypted_password).each do |attr|
-        it "does not contain #{attr}" do
-          expect(response.body).to_not have_json_path(attr)
-        end
+      
+      0.upto 1 do |i|
+        it_behaves_like "json list", %w(id email created_at updated_at), :me, "profiles/#{i}/", false
+        it_behaves_like "json path exclusion", %w(password encrypted_password), "profiles/#{i}/"
       end
     end
 
-    context 'unauthorized' do
-      it 'return 401 status if there is no access token' do
-        get '/api/v1/profiles', format: :json
-        expect(response.status).to eq 401
-      end
+    it_behaves_like "API Authenticable"
 
-      it 'return 401 status if access token is invalid' do
-        get '/api/v1/profiles', format: :json, access_token: '1234'
-        expect(response.status).to eq 401
-      end
+    def do_request(options = {})
+      get "/api/v1/profiles", { format: :json }.merge(options)
     end
   end
 end
