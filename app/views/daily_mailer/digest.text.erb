@@ -1,0 +1,6 @@
+Hello, <%= @user.email %>!
+Every day digest from QNA!
+
+<%- @questions.each do |question| %>
+  <%= "#{question.title} - #{question_url(question.id)}" %>
+<%- end %>

@@ -7,4 +7,6 @@ class Question < ActiveRecord::Base
   has_many :answers, dependent: :destroy
 
   validates :user_id, :title, :body, presence: true
+
+  scope :digest, -> { where("created_at >= ?", 1.day.ago) }
 end

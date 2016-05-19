@@ -36,6 +36,11 @@ gem 'doorkeeper'
 gem 'oj'
 gem 'oj_mimic_json'
 
+gem 'sidekiq'
+gem 'sinatra', :require => nil
+
+gem 'whenever'
+
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 # Use Unicorn as the app server
