@@ -9,6 +9,8 @@ class Answer < ActiveRecord::Base
   validates :user_id, :question_id, :body, presence: true
 
   default_scope -> { order(best: :desc) }
+  
+  after_save :send_email_to_author
 
   def set_best
     ActiveRecord::Base.transaction do
@@ -16,4 +18,9 @@ class Answer < ActiveRecord::Base
       self.update!(best: true)
     end
   end
+
+  private
+    def send_email_to_author
+      QuestionSubscribersJob.perform_later(question, self)
+    end
 end

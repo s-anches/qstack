@@ -1,0 +1,6 @@
+h3 Hello, #{@question_author.email}!
+p
+  | You have new answer for you question
+  =< link_to @question.title, question_url(@question.id)
+p User #{@answer_author.email} wrote:
+p #{@answer.body}

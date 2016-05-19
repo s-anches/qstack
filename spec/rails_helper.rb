@@ -7,7 +7,7 @@ require 'pundit/rspec'
 require 'pundit/matchers'
 require 'sidekiq/testing'
 
-Sidekiq::Testing.inline!
+Sidekiq::Testing.fake!
 
 Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
 
