@@ -12,18 +12,13 @@ RSpec.describe DailyMailer, type: :mailer do
       expect(mail.to).to eq([user.email])
     end
 
-    shared_examples_for "body rendering" do |part|
-      it "renders the #{part.to_s}" do
-        questions.each do |question|
-          expect(mail.body.encoded)
-            .to include(question.title)
-          expect(mail.body.encoded)
-            .to include(question_url(question.id))
-        end
+    it "renders the body" do
+      questions.each do |question|
+        expect(mail.body.encoded)
+          .to include(question.title)
+        expect(mail.body.encoded)
+          .to include(question_url(question.id))
       end
     end
-
-    it_behaves_like "body rendering", :text_part
-    it_behaves_like "body rendering", :html_part
   end
 end

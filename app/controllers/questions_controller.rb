@@ -2,10 +2,11 @@ class QuestionsController < ApplicationController
   include Voted
 
   before_action :authenticate_user!, except: [:index, :show]
-  before_action :load_question, only: [:show, :update, :destroy]
+  before_action :load_question, only: [:show, :update, :destroy, :subscribe]
   after_action :publish_to, only: [:create, :update, :destroy]
 
-  respond_to :js, only: :update
+  respond_to :js, only: [:update]
+  respond_to :json, only: [:subscribe]
 
   def index
     authorize Question
@@ -36,6 +37,12 @@ class QuestionsController < ApplicationController
   def destroy
     authorize @question
     respond_with(@question.destroy)
+  end
+
+  def subscribe
+    authorize @question
+    current_user.subscribe(@question)
+    render json: @question.to_json
   end
 
   private

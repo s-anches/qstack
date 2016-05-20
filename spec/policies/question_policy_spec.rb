@@ -14,12 +14,13 @@ describe QuestionPolicy do
       let(:question) { create_list(:question, 5) }
       it { should permit_action(:index)   }
     end
-    it { should permit_action(:show)    }
+    it { should permit_action(:show)      }
 
-    it { should forbid_action(:new)     }
-    it { should forbid_action(:create)  }
-    it { should forbid_action(:update)  }
-    it { should forbid_action(:destroy) }
+    it { should forbid_action(:new)       }
+    it { should forbid_action(:create)    }
+    it { should forbid_action(:update)    }
+    it { should forbid_action(:destroy)   }
+    it { should forbid_action(:subscribe) }
   end
 
   context "for a user" do
@@ -35,11 +36,13 @@ describe QuestionPolicy do
 
       it { should permit_action(:update)  }
       it { should permit_action(:destroy) }
+      it { should forbid_action(:subscribe) }
     end
 
     context 'foreign question' do
       it { should forbid_action(:update)  }
       it { should forbid_action(:destroy) }
+      it { should permit_action(:subscribe) }
     end
   end
 

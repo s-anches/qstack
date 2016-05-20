@@ -2,6 +2,8 @@ class QuestionSubscribersJob < ActiveJob::Base
   queue_as :default
 
   def perform(question, answer)
-    NotificationsMailer.new_answer(question, answer).deliver_later
+    question.subscriptions.find_each do |subscriber|
+      NotificationsMailer.new_answer(subscriber.user, question, answer).deliver_later
+    end
   end
 end

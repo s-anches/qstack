@@ -13,6 +13,12 @@
           li => link_to 'Edit', '#', class: 'edit_question'
         - if policy(@question).destroy?
           li => link_to 'Delete', @question, method: :delete
+        - if policy(@question).subscribe?
+          li.subscription => link_to 'Subscribe', subscribe_question_path(@question),
+            method: :patch, remote: true, data: { type: :json },
+            class: 'link-subscribe'
+        - if policy(@question).unsubscribe?
+          | You subscribed
     - if policy(Answer).create?
       .row
         ul.nav.nav-pills

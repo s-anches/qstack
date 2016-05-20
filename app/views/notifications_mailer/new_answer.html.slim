@@ -1,6 +1,6 @@
-h3 Hello, #{@question_author.email}!
+h3 Hello, #{@user.email}!
 p
   | You have new answer for you question
   =< link_to @question.title, question_url(@question.id)
-p User #{@answer_author.email} wrote:
+p User #{@answer.user.email} wrote:
 p #{@answer.body}

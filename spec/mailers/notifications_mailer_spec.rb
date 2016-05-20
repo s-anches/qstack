@@ -6,27 +6,22 @@ RSpec.describe NotificationsMailer, type: :mailer do
     let(:other_user) { create(:user) }
     let(:question) { create(:question, user: user) }
     let(:answer) { create(:answer, question: question, user: other_user) }
-    let!(:mail) { described_class.new_answer(question, answer).deliver_now }
+    let!(:mail) { described_class.new_answer(user, question, answer).deliver_now }
 
     it "renders the headers" do
       expect(mail.subject).to eq("New answer for you question #{question.title}!")
       expect(mail.to).to eq([user.email])
     end
 
-    shared_examples_for "body rendering" do |part|
-      it "renders the #{part.to_s}" do
-        expect(mail.body.encoded)
-          .to include(question.title)
-        expect(mail.body.encoded)
-          .to include(question_url(question.id))
-        expect(mail.body.encoded)
-          .to include(answer.body)
-        expect(mail.body.encoded)
-          .to include(other_user.email)
-      end
+    it "renders the body" do
+      expect(mail.body.encoded)
+        .to include(question.title)
+      expect(mail.body.encoded)
+        .to include(question_url(question.id))
+      expect(mail.body.encoded)
+        .to include(answer.body)
+      expect(mail.body.encoded)
+        .to include(other_user.email)
     end
-
-    it_behaves_like "body rendering", :text_part
-    it_behaves_like "body rendering", :html_part
   end
 end

@@ -25,8 +25,14 @@
     .data "association-insertion-node", (link) ->
       return link.closest('.form-group').parent().find('.attachments_form')
 
+@bindSubscribeLink = ->
+  $('.link-subscribe').bind "ajax:success", (e, data, status, xhr) ->
+    $('.subscription').html("You subscribed for this question.")
+  .bind "ajax:error", (e, xhr, status, error) ->
+    console.log("Subscribe error")
+
 @bindLinkVotes = ->
-  $('.link-like, .link-dislike, .link-unvote').bind "ajax:success", (e, data,status, xhr) ->
+  $('.link-like, .link-dislike, .link-unvote').bind "ajax:success", (e, data, status, xhr) ->
     e.preventDefault()
     data = this.dataset
     response = $.parseJSON(xhr.responseText)
@@ -54,6 +60,7 @@ $ ->
   bindAddFiles()
   bindPlaceFiles()
   bindLinkVotes()
+  bindSubscribeLink()
 
   PrivatePub.subscribe '/questions', (data, channel) ->
     action = data['action']

@@ -7,6 +7,7 @@ class User < ActiveRecord::Base
   has_many :votes, dependent: :destroy
   has_many :comments, dependent: :destroy
   has_many :authorizations, dependent: :destroy
+  has_many :subscriptions, dependent: :destroy
 
   devise :database_authenticatable, :registerable, :confirmable,
          :recoverable, :rememberable, :trackable, :validatable,
@@ -24,6 +25,14 @@ class User < ActiveRecord::Base
 
   def voted?(object)
     votes.exists?(votable: object)
+  end
+
+  def subscribed?(object)
+    subscriptions.exists?(question: object)
+  end
+
+  def subscribe(object)
+    subscriptions.create(question: object) unless subscribed?(object)
   end
 
   def self.find_for_oauth(auth, signed_in_resource = nil)

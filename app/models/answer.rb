@@ -10,7 +10,7 @@ class Answer < ActiveRecord::Base
 
   default_scope -> { order(best: :desc) }
   
-  after_save :send_email_to_author
+  after_save :send_email_to_subscribers
 
   def set_best
     ActiveRecord::Base.transaction do
@@ -20,7 +20,7 @@ class Answer < ActiveRecord::Base
   end
 
   private
-    def send_email_to_author
+    def send_email_to_subscribers
       QuestionSubscribersJob.perform_later(question, self)
     end
 end
