@@ -26,6 +26,7 @@ Rails.application.routes.draw do
 
   resources :questions, concerns: [:votable, :commentable], shallow: true do
     patch 'subscribe', on: :member
+    patch 'unsubscribe', on: :member
     resources :answers, concerns: [:votable, :commentable] do
       member do
         patch 'set_best'

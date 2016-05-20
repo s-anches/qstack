@@ -31,6 +31,12 @@
   .bind "ajax:error", (e, xhr, status, error) ->
     console.log("Subscribe error")
 
+@bindUnsubscribeLink = ->
+  $('.link-unsubscribe').bind "ajax:success", (e, data, status, xhr) ->
+    $('.unsubscription').html("You unsubscribed for this question.")
+  .bind "ajax:error", (e, xhr, status, error) ->
+    console.log("Unsubscribe error")
+
 @bindLinkVotes = ->
   $('.link-like, .link-dislike, .link-unvote').bind "ajax:success", (e, data, status, xhr) ->
     e.preventDefault()
@@ -61,6 +67,7 @@ $ ->
   bindPlaceFiles()
   bindLinkVotes()
   bindSubscribeLink()
+  bindUnsubscribeLink()
 
   PrivatePub.subscribe '/questions', (data, channel) ->
     action = data['action']

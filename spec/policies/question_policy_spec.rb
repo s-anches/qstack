@@ -21,6 +21,7 @@ describe QuestionPolicy do
     it { should forbid_action(:update)    }
     it { should forbid_action(:destroy)   }
     it { should forbid_action(:subscribe) }
+    it { should forbid_action(:unsubscribe) }
   end
 
   context "for a user" do
@@ -33,16 +34,19 @@ describe QuestionPolicy do
 
     context 'his question' do
       let(:question) { create(:question, user: user) }
+      let!(:subscription) { user.subscribe(question) }
 
       it { should permit_action(:update)  }
       it { should permit_action(:destroy) }
       it { should forbid_action(:subscribe) }
+      it { should permit_action(:unsubscribe) }
     end
 
     context 'foreign question' do
       it { should forbid_action(:update)  }
       it { should forbid_action(:destroy) }
       it { should permit_action(:subscribe) }
+      it { should forbid_action(:unsubscribe) }
     end
   end
 

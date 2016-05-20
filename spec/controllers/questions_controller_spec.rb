@@ -199,4 +199,26 @@ RSpec.describe QuestionsController, type: :controller do
       end
     end
   end
+
+  describe 'PATCH #unsubscribe' do
+    context 'Authenticated user' do
+      before do
+        sign_in(user)
+        user.subscribe(own_question)
+      end
+
+      it 'delete subscribe from database' do
+        expect(user.subscriptions.count).to eq 1
+        patch :unsubscribe, id: own_question, format: :js
+        user.reload
+        expect(user.subscriptions.count).to eq 0
+      end
+    end
+
+    context 'Non-authenticated user' do
+      it 'not delete subscribe from database' do
+        expect { patch :unsubscribe, id: foreign_question, format: :js }.to_not change(foreign_question.subscriptions, :count)
+      end
+    end
+  end
 end

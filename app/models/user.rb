@@ -35,6 +35,11 @@ class User < ActiveRecord::Base
     subscriptions.create(question: object) unless subscribed?(object)
   end
 
+  def unsubscribe(object)
+    subscription = subscriptions.find_by(question: object)
+    subscription.destroy if subscription
+  end
+
   def self.find_for_oauth(auth, signed_in_resource = nil)
 
     authorization = Authorization.find_for_oauth(auth)

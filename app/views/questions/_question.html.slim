@@ -18,7 +18,9 @@
             method: :patch, remote: true, data: { type: :json },
             class: 'link-subscribe'
         - if policy(@question).unsubscribe?
-          | You subscribed
+          li.unsubscription => link_to 'Unsubscribe', unsubscribe_question_path(@question),
+            method: :patch, remote: true, data: { type: :json },
+            class: 'link-unsubscribe'
     - if policy(Answer).create?
       .row
         ul.nav.nav-pills
