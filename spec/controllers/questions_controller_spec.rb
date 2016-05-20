@@ -183,4 +183,20 @@ RSpec.describe QuestionsController, type: :controller do
       end
     end
   end
+
+  describe 'PATCH #subscribe' do
+    context 'Authenticated user' do
+      before { sign_in(user) }
+
+      it 'save subscribe to database' do
+        expect { patch :subscribe, id: foreign_question, format: :js }.to change(user.subscriptions, :count).by(1)
+      end
+    end
+
+    context 'Non-authenticated user' do
+      it 'not save subscribe to database' do
+        expect { patch :subscribe, id: foreign_question, format: :js }.to_not change(foreign_question.subscriptions, :count)
+      end
+    end
+  end
 end
