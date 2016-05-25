@@ -5,7 +5,7 @@ RSpec.describe DailyMailer, type: :mailer do
 
   describe ".digest" do
     let!(:questions) { create_list(:question, 3)}
-    let!(:mail) { described_class.digest(user, questions).deliver_now }
+    let!(:mail) { described_class.digest(user).deliver_now }
 
     it "renders the headers" do
       expect(mail.subject).to eq("Every day digest!")

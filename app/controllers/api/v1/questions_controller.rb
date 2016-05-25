@@ -8,7 +8,7 @@ class Api::V1::QuestionsController < Api::V1::BaseController
 
   def show
     authorize :api
-    respond_with @question
+    respond_with @question, serializer: Api::V1::QuestionSerializer
   end
 
   def create

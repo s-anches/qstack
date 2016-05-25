@@ -1,7 +1,7 @@
 class DailyMailer < ApplicationMailer
-  def digest(user, questions)
+  def digest(user)
     @user = user
-    @questions = questions
+    @questions = Question.digest
     mail(to: @user.email, subject: 'Every day digest!')
   end
 end
