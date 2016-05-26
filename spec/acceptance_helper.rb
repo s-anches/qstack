@@ -5,9 +5,12 @@ require 'capybara/email/rspec'
 RSpec.configure do |config|
   config.include AcceptanceHelpers, type: :feature
   config.include OmniauthMacros, type: :feature
+  config.include SphinxHelpers, type: :feature
   config.use_transactional_fixtures = false
 
   config.before(:suite) do
+    ThinkingSphinx::Test.init
+    ThinkingSphinx::Test.start_with_autostop
     DatabaseCleaner.clean_with(:truncation)
   end
 

@@ -19,3 +19,6 @@ public/tmp
 .DS_Store
 public/assets
 .env
+
+config/*.sphinx.conf
+db/sphinx

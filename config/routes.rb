@@ -24,6 +24,9 @@ Rails.application.routes.draw do
     resources :comments, only: [:create, :destroy]
   end
 
+  get 'search' => 'search#search'
+  post 'search' => 'search#search'
+
   resources :questions, concerns: [:votable, :commentable], shallow: true do
     resources :subscriptions, only: [:create, :destroy]
     resources :answers, concerns: [:votable, :commentable] do

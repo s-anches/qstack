@@ -25,7 +25,11 @@ html
                   li = link_to 'New user', new_user_registration_path
             .col-xs-2
               h4 = link_to 'QnA', root_path
-            .col-xs-4.col-xs-offset-2
+            .col-xs-3.search
+              ul.nav.nav-pills
+                - if policy(:search).search?
+                  li = link_to 'Search', search_path
+            .col-xs-3
               - if user_signed_in?
                 h5 Welcome, #{current_user.email}
         .row
