@@ -1,5 +1,5 @@
 # paths
-app_path = "/home/sanches/qstack"
+app_path = "/home/deployer/qstack"
 working_directory "#{app_path}/current"
 pid               "#{app_path}/current/tmp/pids/unicorn.pid"
 

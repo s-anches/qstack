@@ -2,10 +2,10 @@ lock '3.5.0'
 
 set :application, 'qna'
 set :repo_url, 'git@github.com:s-anches/qstack.git'
-set :deploy_to, '/home/sanches/qstack'
-set :deploy_user, 'sanches'
+set :deploy_to, '/home/deployer/qstack'
+set :deploy_user, 'deployer'
 
-set :linked_files, %w{config/database.yml config/private_pub.yml config/private_pub_thin.yml .env}
+set :linked_files, %w{config/database.yml config/private_pub.yml config/private_pub_thin.yml .env lib/ssl/portnyagin.space.crt lib/ssl/portnyagin.space.key}
 
 set :linked_dirs, %w{bin log tmp/pids tmp/cache tnp/sockets vendor/bundle public/system public/uploads}
 
