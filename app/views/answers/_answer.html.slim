@@ -1,35 +1,39 @@
-- if answer.persisted?
-  .answer id = "answer-#{answer.id}"
-    .row
-      .col-xs-1.votes
-        .row.text-center.best
-          .status
-            - if answer.best
-              h5 Best
-        = render 'layouts/vote_links', object: answer
-      .col-xs-offset-1.col-xs-5
-        = answer.body
-        = render 'layouts/attachments', object: answer
-        - if user_signed_in?
-            ul.nav.nav-pills
-              - if policy(answer).update?
-                li => link_to 'Edit', '#', id: answer.id, class: 'edit_answer'
-              - if policy(answer).destroy?
-                li = link_to 'Delete', answer_path(answer), method: :delete,
-                  class: "delete-answer-link", remote: true
-              - if policy(answer).set_best?
-                li =< link_to 'Set best', set_best_answer_path(answer), method: :patch, remote: true, data: { type: :json }
-      .col-xs-5
-        = render 'answers/form', answer: answer
-    .row
-      .col-xs-7.col-xs-offset-5
-        .row.comments
-          = render answer.comments
-        .row
-          - if policy(Comment).create?
-            = link_to 'Add comment', '#', class: 'link-new-comment'
-            = render partial: 'comments/form', locals: { commentable: answer, comment: answer.comments.build }
-    .row
-      hr
+- cache answer do
+  - if answer.persisted?
+    .answer id = "answer-#{answer.id}"
+      .row
+        .col-xs-1.votes
+          .row.text-center.best
+            .status
+              - if answer.best
+                h5 Best
+          = render 'layouts/vote_links', object: answer
+        .col-xs-offset-1.col-xs-5
+          = answer.body
+          = render 'layouts/attachments', object: answer
+          - if user_signed_in?
+            - cache 'answer_links'
+              ul.nav.nav-pills
+                - if policy(answer).update?
+                  li => link_to 'Edit', '#', id: answer.id, class: 'edit_answer'
+                - if policy(answer).destroy?
+                  li = link_to 'Delete', answer_path(answer), method: :delete,
+                    class: "delete-answer-link", remote: true
+                - if policy(answer).set_best?
+                  li =< link_to 'Set best', set_best_answer_path(answer), method: :patch, remote: true, data: { type: :json }
+        - cache 'answer_form'
+          .col-xs-5
+            = render 'answers/form', answer: answer
+      .row
+        .col-xs-7.col-xs-offset-5
+          .row.comments
+            = render answer.comments
+          .row
+            - if policy(Comment).create?
+              = link_to 'Add comment', '#', class: 'link-new-comment'
+              - cache 'comment_form'
+                = render partial: 'comments/form', locals: { commentable: answer, comment: answer.comments.build }
+      .row
+        hr
 
 = subscribe_to "/answers/#{answer.id}/comments"

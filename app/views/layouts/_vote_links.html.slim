@@ -1,11 +1,12 @@
-.row.rating.text-center
-    h6 Rating:
-    h3 = object.rating
-.row
-  - if policy(object).can_vote?
-    ul.nav.nav-pills.center-pills#vote-links
-      li.dislike = vote_link(object, :dislike)
-      li.like = vote_link(object, :like)
-  - if policy(object).unvote?
-    ul.nav.nav-pills.center-pills#vote-links
-      li.unvote = vote_link(object, :unvote)
+- cache 'vote_links' do
+  .row.rating.text-center
+      h6 Rating:
+      h3 = object.rating
+  .row
+    - if policy(object).can_vote?
+      ul.nav.nav-pills.center-pills#vote-links
+        li.dislike = vote_link(object, :dislike)
+        li.like = vote_link(object, :like)
+    - if policy(object).unvote?
+      ul.nav.nav-pills.center-pills#vote-links
+        li.unvote = vote_link(object, :unvote)

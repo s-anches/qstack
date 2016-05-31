@@ -1,7 +1,8 @@
-.questions
-  - @questions.each do |question|
-    div.row id="question-#{question.id}" data-id="#{question.id}" data-object="question"
-      h5 = link_to question.title, question
-      = question.body
+- cache collection_cache_key_for :question do
+  .questions
+    - @questions.each do |question|
+      div.row id="question-#{question.id}" data-id="#{question.id}" data-object="question"
+        h5 = link_to question.title, question
+        = question.body
 
 = subscribe_to "/questions"

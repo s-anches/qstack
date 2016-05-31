@@ -1,28 +1,30 @@
-.row
-  .col-xs-11.col-xs-offset-1.question id="question-#{@question.id}" data-id="#{@question.id}"
-    .row
-      .col-xs-7.question
-        = render @question
-      .col-xs-5.new-forms
-        - if policy(Answer).create?
-          .new_answer
-            = render partial: 'answers/form', locals: { answer: [@question, @question.answers.build] }
-        - if policy(@question).update?
-          .edit_question
-            = render partial: 'form', locals: { question: @question }
-    .row
-      .col-xs-7.col-xs-offset-5
-        .row.comments
-          = render @question.comments
-        .row
-          - if policy(Comment).create?
-            = link_to 'Add comment', '#', class: 'link-new-comment'
-            = render partial: 'comments/form', locals: { commentable: @question, comment: @question.comments.build }
-.row
-  hr
-.row
-  .col-xs-10.col-xs-offset-2.answers data={question_id: "#{@question.id}"}
-    = render @question.answers
+- cache @question do
+  .row
+    .col-xs-11.col-xs-offset-1.question id="question-#{@question.id}" data-id="#{@question.id}"
+      .row
+        .col-xs-7.question
+          = render @question
+        .col-xs-5.new-forms
+          - if policy(Answer).create?
+            - cache 'new_answer_form' do
+              .new_answer
+                = render partial: 'answers/form', locals: { answer: [@question, @question.answers.build] }
+          - if policy(@question).update?
+            .edit_question
+              = render partial: 'form', locals: { question: @question }
+      .row
+        .col-xs-7.col-xs-offset-5
+          .row.comments
+            = render @question.comments
+          .row
+            - if policy(Comment).create?
+              = link_to 'Add comment', '#', class: 'link-new-comment'
+              = render partial: 'comments/form', locals: { commentable: @question, comment: @question.comments.build }
+  .row
+    hr
+  .row
+    .col-xs-10.col-xs-offset-2.answers data={question_id: "#{@question.id}"}
+      = render @question.answers
 
 = subscribe_to "/questions/#{@question.id}"
 = subscribe_to "/questions/#{@question.id}/answers"
