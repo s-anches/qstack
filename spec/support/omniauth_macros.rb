@@ -5,6 +5,11 @@ module OmniauthMacros
       uid: '123545',
       info: {
         email: email
+      },
+      extra: {
+        raw_info: {
+          email: email
+        }
       }})
   end
 end

@@ -29,6 +29,7 @@ gem 'omniauth-facebook'
 gem 'omniauth-twitter'
 gem 'omniauth-vkontakte'
 gem 'omniauth-github'
+gem 'omniauth-instagram'
 
 gem 'pundit'
 
