@@ -19,3 +19,6 @@ set :ssh_options, {
   auth_methods: %w(publickey password),
   port: 8022
 }
+
+set :sidekiq_role, :app  
+set :sidekiq_queue, [:default, :mailers]
