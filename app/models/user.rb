@@ -11,7 +11,8 @@ class User < ActiveRecord::Base
 
   devise :database_authenticatable, :registerable, :confirmable,
          :recoverable, :rememberable, :trackable, :validatable,
-         :omniauthable,  omniauth_providers: [:facebook, :twitter, :vkontakte]
+         :omniauthable,
+         omniauth_providers: [:facebook, :twitter, :vkontakte, :github]
 
   validates_format_of :email, :without => TEMP_EMAIL_REGEX, on: :update
 

@@ -227,6 +227,9 @@ GEM
       rack (>= 1.0, < 3)
     omniauth-facebook (3.0.0)
       omniauth-oauth2 (~> 1.2)
+    omniauth-github (1.1.2)
+      omniauth (~> 1.0)
+      omniauth-oauth2 (~> 1.1)
     omniauth-oauth (1.1.0)
       oauth
       omniauth (~> 1.0)
@@ -455,6 +458,7 @@ DEPENDENCIES
   oj_mimic_json
   omniauth
   omniauth-facebook
+  omniauth-github
   omniauth-twitter
   omniauth-vkontakte
   pg (~> 0.15)

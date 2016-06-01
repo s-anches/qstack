@@ -10,6 +10,9 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   def vkontakte
   end
 
+  def github
+  end
+
   def after_sign_in_path_for(resource)
     if resource.email_verified?
       super resource
