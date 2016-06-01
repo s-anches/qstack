@@ -241,7 +241,7 @@ Devise.setup do |config|
   config.omniauth :facebook,
     ENV['FB_APP_ID'],
     ENV['FB_APP_KEY'],
-    scope: :email
+    scope: [:email, :user_birthday, :user_about_me]
 
   config.omniauth :twitter,
     ENV['TW_APP_ID'],
@@ -259,7 +259,7 @@ Devise.setup do |config|
     ENV['VK_APP_ID'],
     ENV['VK_APP_KEY'],
     {
-      scope: [:friends, :photos, :audio]
+      scope: [:email, :offline]
     }
 
   config.omniauth :github,

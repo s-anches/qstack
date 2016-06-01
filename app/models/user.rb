@@ -42,13 +42,15 @@ class User < ActiveRecord::Base
   end
 
   def self.find_for_oauth(auth, signed_in_resource = nil)
+    info = auth.info
+    raw_info = auth.extra.raw_info
 
     authorization = Authorization.find_for_oauth(auth)
 
     user = signed_in_resource ? signed_in_resource : authorization.user
 
     if user.nil?
-      email = auth.info.email
+      email = info.email || raw_info.email
       user = User.where(email: email).first if email
 
       if user.nil?
