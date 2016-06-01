@@ -57,3 +57,5 @@ namespace :private_pub do
 end
 
 after 'deploy:finished', 'private_pub:restart'
+after 'deploy:finished', 'thinking_sphinx:index'
+after 'deploy:finished', 'thinking_sphinx:restart'
