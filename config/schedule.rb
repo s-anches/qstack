@@ -3,5 +3,5 @@ every 1.day, at: '14:00' do
 end
 
 every 60.minutes do
-  rake "ts:index"
+  rake "ts:index", :output => {error: 'cron.log', standard: nil}
 end
